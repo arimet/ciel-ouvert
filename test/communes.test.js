@@ -51,3 +51,8 @@ test('a region without its own scene still gets a regional scene with the sign',
   expect(r.entry.kind).toBe('region')
   expect(r.signText).toBe('SAINT-DENIS')
 })
+
+test('with no regional scene at all, any commune still gets a scene', () => {
+  const r = resolveScene({ code: '54304', name: 'Laxou', region: '44' }, [{ id: 'nancy', kind: 'city', code: '54395' }])
+  expect(r.entry.id).toBe('nancy')
+})

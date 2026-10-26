@@ -2,16 +2,36 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Ciel ouvert</title>
-<style>
-  body { margin: 0; background: #101215; }
-  #view { position: relative; height: 100vh; }
-  #view canvas { display: block; width: 100%; height: 100%; }
-</style>
+<meta name="description" content="Le vrai ciel du moment au-dessus de la place de votre commune, et de quoi le comprendre.">
+<link rel="stylesheet" href="/src/style.css">
 </head>
 <body>
-<div id="view"></div>
+<main id="app">
+  <div id="view" aria-hidden="true"></div>
+
+  <header class="top">
+    <h1>Ciel ouvert</h1>
+    <div class="search">
+      <input id="q" type="search" placeholder="Votre commune" autocomplete="off" spellcheck="false"
+        role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="suggestions" aria-label="Rechercher une commune">
+      <ul id="suggestions" role="listbox" aria-label="Communes" hidden></ul>
+    </div>
+  </header>
+
+  <p id="caption" aria-live="polite"></p>
+
+  <section id="panel" class="panel" hidden aria-label="Comprendre"></section>
+
+  <footer class="bottom">
+    <nav class="tabs" role="tablist">
+      <button type="button" role="tab" data-tab="meteo" aria-selected="true">Météo</button>
+      <button type="button" role="tab" data-tab="comprendre" aria-selected="false">Comprendre</button>
+    </nav>
+    <p id="credit"></p>
+  </footer>
+</main>
 <script type="module" src="/src/main.js"></script>
 </body>
 </html>

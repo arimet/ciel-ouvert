@@ -1,24 +1,46 @@
 import * as THREE from 'three'
 import catalog from './places/catalog.json'
-import { createPhotoLayer } from './scene/photoLayer.js'
-import { createOverlay } from './scene/overlay.js'
-import { createSky } from './sky/sky.js'
+import { resolveScene } from './places/communes.js'
 import { createQualityController, hasWebGL2 } from './perf/quality.js'
+import { createOverlay } from './scene/overlay.js'
+import { createPhotoLayer } from './scene/photoLayer.js'
+import { createSky } from './sky/sky.js'
+import { sunElevationDeg } from './sky/sun.js'
+import { showCaption } from './ui/caption.js'
+import { renderComprendre } from './ui/comprendre.js'
+import { mountSearch } from './ui/search.js'
+import { mountTabs } from './ui/tabs.js'
 import { ANCHORS } from './weather/anchors.js'
+import { blendWeather } from './weather/blend.js'
+import { probableCloudFamilies } from './weather/cloudFamily.js'
+import { loadWeather } from './weather/openMeteo.js'
 
-// Debug/review URL: ?scene=<id>&anchor=<key>&hour=<UTC hour on 26 Oct 2026>
+const $ = id => document.getElementById(id)
+const view = $('view')
+const BASE = import.meta.env.BASE_URL
+const NANCY = { code: '54395', name: 'Nancy', department: '54', region: '44', lat: 48.6937, lon: 6.1834, population: 104000 }
+
+// Review URL: ?scene=<id>&anchor=<key>&hour=<UTC hour on 26 Oct 2026>&snow=<0..1>&sign=<name>
 const params = new URLSearchParams(location.search)
 const ANCHOR_HOURS = { clear: 13.5, cloudy: 12, rain: 11, storm: 15, fog: 8.6, sunset: 16.15, night: 21 }
-const anchorKey = params.get('anchor') ?? 'clear'
-const hour = Number(params.get('hour') ?? ANCHOR_HOURS[anchorKey])
-const entry = catalog.find(e => e.id === (params.get('scene') ?? 'nancy'))
+const forcedAnchor = params.get('anchor')
+const forcedHour = params.has('hour') || forcedAnchor ? Number(params.get('hour') ?? ANCHOR_HOURS[forcedAnchor]) : null
+const forcedEntry = catalog.find(e => e.id === params.get('scene'))
 
-const view = document.getElementById('view')
+const storage = {
+  get() { try { return JSON.parse(localStorage.getItem('commune')) } catch { return null } },
+  set(c) { try { localStorage.setItem('commune', JSON.stringify(c)) } catch { /* private browsing */ } },
+}
+
+const state = { commune: null, weather: null, error: false, families: null, effects: ANCHORS.cloudy.effects, token: 0 }
+
 // three.js needs WebGL2: without it, the photo alone with its own sky.
 if (!hasWebGL2()) {
-  view.innerHTML = `<img src="${import.meta.env.BASE_URL + entry.photo}" alt="" style="width:100%;height:100%;object-fit:cover">`
+  const entry = forcedEntry ?? resolveScene(storage.get() ?? NANCY, catalog).entry
+  view.innerHTML = `<img src="${BASE + entry.photo}" alt="" style="object-fit:cover">`
   throw new Error('WebGL2 unavailable: photo only')
 }
+
 const renderer = new THREE.WebGLRenderer({ depth: false })
 renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5))
 renderer.toneMapping = THREE.NoToneMapping
@@ -26,12 +48,50 @@ view.prepend(renderer.domElement)
 
 const overlay = createOverlay()
 const photo = createPhotoLayer(renderer, overlay.texture)
-const sky = createSky(renderer, entry)
-const { sky: skyParams } = ANCHORS[anchorKey]
-const effects = { ...ANCHORS[anchorKey].effects, ...(params.has('snow') && { snow: Number(params.get('snow')), rain: 0 }) }
-sky.setParams(skyParams)
-sky.setDate(new Date(Date.UTC(2026, 9, 26, Math.floor(hour), (hour % 1) * 60)))
-photo.setEffects(effects)
+const sky = createSky(renderer, catalog.find(e => e.id === 'nancy'))
+
+const now = () => forcedHour == null ? new Date() : new Date(Date.UTC(2026, 9, 26, Math.floor(forcedHour), (forcedHour % 1) * 60))
+
+function applySky() {
+  const c = state.commune
+  if (!c) return
+  const date = now()
+  const { sky: skyParams, effects } = forcedAnchor
+    ? ANCHORS[forcedAnchor]
+    : blendWeather(state.weather, sunElevationDeg(date, c.lat, c.lon))
+  state.effects = { ...effects, ...(params.has('snow') && { snow: Number(params.get('snow')), rain: 0 }) }
+  sky.setParams(skyParams)
+  sky.setDate(date)
+  photo.setEffects(state.effects)
+  showCaption($('caption'), { name: c.name, weather: state.weather, error: state.error, now: date })
+  renderPanel()
+}
+
+function renderPanel() {
+  renderComprendre($('panel'), { families: state.families, texts: {}, lessons: [], onLesson: () => {} })
+}
+
+async function refreshWeather() {
+  const c = state.commune, token = state.token
+  const { weather, error } = await loadWeather(c.lat, c.lon)
+  if (token !== state.token) return
+  Object.assign(state, { weather, error, families: weather ? probableCloudFamilies(weather) : null })
+  applySky()
+}
+
+async function show(commune, entryOverride) {
+  const token = ++state.token
+  const { entry, signText } = entryOverride ? { entry: entryOverride, signText: params.get('sign') } : resolveScene(commune, catalog)
+  Object.assign(state, { commune, weather: null, error: false, families: null })
+  // Regional squares stand in for the commune: the sky (sun, time) is the commune's own.
+  sky.setView(entry.kind === 'city' ? entry : { ...entry, lat: commune.lat, lon: commune.lon })
+  applySky()
+  await photo.load(entry, signText)
+  if (token !== state.token) return
+  const { author, license, url } = entry.credit
+  $('credit').innerHTML = `Photo : <a href="${url}" target="_blank" rel="noopener">${author}</a>, ${license}`
+  refreshWeather()
+}
 
 function resize() {
   const w = view.clientWidth, h = view.clientHeight
@@ -43,14 +103,22 @@ function resize() {
 addEventListener('resize', resize)
 resize()
 
+mountSearch($('q'), $('suggestions'), c => { storage.set(c); show(c) })
+mountTabs(document.querySelectorAll('.tabs button'), $('panel'), tab => { $('caption').hidden = tab === 'comprendre' })
+setInterval(() => state.commune && refreshWeather(), 15 * 60 * 1000)
+setInterval(applySky, 60 * 1000)
+
 const quality = createQualityController()
 const clock = new THREE.Clock()
-Promise.all([sky.ready, photo.load(entry)]).then(() => renderer.setAnimationLoop(() => {
+const first = forcedEntry
+  ? show({ code: forcedEntry.code, name: forcedEntry.name, region: forcedEntry.code, lat: forcedEntry.lat, lon: forcedEntry.lon }, forcedEntry)
+  : show(storage.get() ?? NANCY)
+Promise.all([sky.ready, first]).then(() => renderer.setAnimationLoop(() => {
   const raw = clock.getDelta(), dt = Math.min(raw, .05), t = clock.elapsedTime
   const level = quality.frame(raw, document.hidden)
   if (level === 'photo-only') photo.fallback = true
   else if (level) sky.setQuality(level)
-  photo.setFlash(overlay.draw(dt, t, effects))
+  photo.setFlash(overlay.draw(dt, t, state.effects))
   if (!photo.fallback) sky.render(dt)
   photo.render(t)
 }))

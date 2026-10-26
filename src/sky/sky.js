@@ -15,12 +15,12 @@ function load(loader, url) {
   return new Promise((resolve, reject) => loader.load(url, resolve, undefined, reject))
 }
 
-export function createSky(renderer, { lat, lon, azimuth, pitch }) {
-  const position = new Geodetic(radians(lon), radians(lat), 210).toECEF()
-  const east = new THREE.Vector3(), north = new THREE.Vector3(), up = new THREE.Vector3()
-  Ellipsoid.WGS84.getEastNorthUpVectors(position, east, north, up)
+const east = new THREE.Vector3(), north = new THREE.Vector3(), up = new THREE.Vector3()
 
-  const camera = new THREE.PerspectiveCamera(50, 1, 1, 1e6)
+// Stands the camera at the place, looking along azimuth (degrees from north) and pitch (degrees up).
+function placeCamera(camera, { lat, lon, azimuth, pitch }) {
+  const position = new Geodetic(radians(lon), radians(lat), 210).toECEF()
+  Ellipsoid.WGS84.getEastNorthUpVectors(position, east, north, up)
   camera.position.copy(position)
   camera.up.copy(up)
   const az = radians(azimuth), p = radians(pitch)
@@ -28,6 +28,11 @@ export function createSky(renderer, { lat, lon, azimuth, pitch }) {
     .addScaledVector(east, Math.sin(az) * Math.cos(p))
     .addScaledVector(up, Math.sin(p))
   camera.lookAt(position.clone().add(dir))
+}
+
+export function createSky(renderer, view) {
+  const camera = new THREE.PerspectiveCamera(50, 1, 1, 1e6)
+  placeCamera(camera, view)
 
   const aerial = new AerialPerspectiveEffect(camera)
   aerial.sky = true
@@ -93,6 +98,9 @@ export function createSky(renderer, { lat, lon, azimuth, pitch }) {
       clouds.localWeatherVelocity.set(LOCAL_WEATHER_SPEED * vx, LOCAL_WEATHER_SPEED * vy)
       clouds.shapeVelocity.set(SHAPE_SPEED * vx, 0, SHAPE_SPEED * vy)
       clouds.shapeDetailVelocity.set(SHAPE_DETAIL_SPEED * vx, 0, SHAPE_DETAIL_SPEED * vy)
+    },
+    setView(view) {
+      placeCamera(camera, view)
     },
     setDate(date) {
       getSunDirectionECEF(date, aerial.sunDirection)

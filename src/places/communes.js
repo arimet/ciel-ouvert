@@ -14,6 +14,6 @@ export async function searchCommunes(q, fetchFn = fetch) {
 export function resolveScene(c, catalog) {
   const city = catalog.find(e => e.kind === 'city' && e.code === c.code)
   if (city) return { entry: city, signText: null }
-  const region = catalog.find(e => e.kind === 'region' && e.code === c.region) ?? catalog.find(e => e.kind === 'region')
+  const region = catalog.find(e => e.kind === 'region' && e.code === c.region) ?? catalog.find(e => e.kind === 'region') ?? catalog[0]
   return { entry: region, signText: c.name.toUpperCase() }
 }
