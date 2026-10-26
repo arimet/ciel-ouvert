@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { lightsToMask } from './lights.js'
+import { drawSign, homography } from './sign.js'
 
 const vertexShader = /* glsl */ `
   varying vec2 vUv; varying vec2 sUv; uniform vec2 scale;
@@ -7,7 +8,9 @@ const vertexShader = /* glsl */ `
 
 // Depth map = disparity from Depth Anything: 1 near, 0 at infinity (the sky).
 const fragmentShader = /* glsl */ `
-  uniform sampler2D map, depth, overlay, lights;
+  uniform sampler2D map, depth, overlay, lights, signMap;
+  uniform mat3 signH;
+  uniform float hasSign, signDisp;
   uniform vec3 tint, fogCol;
   uniform float aspect, time, fog, rain, snow, flash, night, maskThreshold, fallback;
   varying vec2 vUv; varying vec2 sUv;
@@ -39,6 +42,16 @@ const fragmentShader = /* glsl */ `
     // Windows and lamps light up at night, with a warm glow.
     photo += vec3(1., .74, .4) * texture2D(lights, vUv).r * night * .9;
     float disp = texture2D(depth, vUv).r;
+    // Town sign: projected through its homography, in front of whatever is farther than it.
+    if (hasSign > .5) {
+      vec3 q = signH * vec3(vUv, 1.);
+      vec2 su = q.xy / q.z;
+      if (all(greaterThanEqual(su, vec2(0.))) && all(lessThanEqual(su, vec2(1.))) && disp <= signDisp + .02) {
+        vec4 sc = texture2D(signMap, su);
+        photo = mix(photo, sc.rgb * tint * (1. - night * .5), sc.a);
+        disp = signDisp;
+      }
+    }
     float m = max(smoothstep(maskThreshold, maskThreshold + .035, disp), fallback);
     float dist = 1. / (disp + .04);
     // Fog follows real distance; far wisps drift slower.
@@ -77,7 +90,7 @@ export function createPhotoLayer(renderer, overlayTexture) {
     transparent: true, depthTest: false, depthWrite: false,
     blending: THREE.CustomBlending, blendSrc: THREE.OneFactor, blendDst: THREE.OneMinusSrcAlphaFactor,
     uniforms: {
-      map: { value: null }, depth: { value: null }, overlay: { value: overlayTexture }, lights: { value: null },
+      map: { value: null }, depth: { value: null }, overlay: { value: overlayTexture }, lights: { value: null }, signMap: { value: null }, signH: { value: new THREE.Matrix3() }, hasSign: { value: 0 }, signDisp: { value: 0 },
       scale: { value: new THREE.Vector2(1, 1) }, aspect: { value: 1.5 }, time: { value: 0 },
       tint: { value: new THREE.Vector3(1, 1, 1) }, fogCol: { value: new THREE.Vector3(.8, .82, .84) },
       fog: { value: 0 }, rain: { value: 0 }, snow: { value: 0 }, flash: { value: 0 }, night: { value: 0 },
@@ -102,7 +115,7 @@ export function createPhotoLayer(renderer, overlayTexture) {
   return {
     get fallback() { return u.fallback.value > .5 },
     set fallback(v) { u.fallback.value = v ? 1 : 0 },
-    async load(entry) {
+    async load(entry, signText = null) {
       const base = import.meta.env.BASE_URL
       const [map, depth] = await Promise.all([loader.loadAsync(base + entry.photo), loader.loadAsync(base + entry.depth)])
       u.map.value?.dispose(); u.depth.value?.dispose(); u.lights.value?.dispose()
@@ -110,6 +123,15 @@ export function createPhotoLayer(renderer, overlayTexture) {
       u.depth.value = depth
       u.lights.value = lightsToMask(entry.lights)
       u.maskThreshold.value = entry.maskThreshold ?? .015
+      u.signMap.value?.dispose()
+      u.hasSign.value = entry.sign && signText ? 1 : 0
+      if (u.hasSign.value) {
+        u.signMap.value = new THREE.CanvasTexture(drawSign(signText))
+        // Catalog corners are photo UV with origin top-left (TL, TR, BR, BL); the shader's UV starts bottom-left.
+        const photoPts = entry.sign.corners.map(([x, y]) => [x, 1 - y])
+        u.signH.value.set(...homography(photoPts, [[0, 1], [1, 1], [1, 0], [0, 0]]))
+        u.signDisp.value = entry.sign.disparity
+      }
       photoAspect = map.image.width / map.image.height
       u.aspect.value = photoAspect
       fit()
