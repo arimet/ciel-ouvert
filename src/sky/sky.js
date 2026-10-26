@@ -1,7 +1,7 @@
 import { EffectComposer, EffectPass, RenderPass, ToneMappingEffect, ToneMappingMode } from 'postprocessing'
 import * as THREE from 'three'
 import { AerialPerspectiveEffect, getMoonDirectionECEF, getSunDirectionECEF, PrecomputedTexturesGenerator } from '@takram/three-atmosphere'
-import { CLOUD_SHAPE_DETAIL_TEXTURE_SIZE, CLOUD_SHAPE_TEXTURE_SIZE, CloudsEffect } from '@takram/three-clouds'
+import { CLOUD_SHAPE_DETAIL_TEXTURE_SIZE, CloudsEffect, CloudShape } from '@takram/three-clouds'
 import { DataTextureLoader, Ellipsoid, Geodetic, parseUint8Array, radians, STBNLoader } from '@takram/three-geospatial'
 
 // Base timelapse speeds validated in the prototype; SkyParams.velocity scales and orients them.
@@ -66,11 +66,6 @@ export function createSky(renderer, { lat, lon, azimuth, pitch }) {
       t.minFilter = THREE.LinearMipMapLinearFilter
       clouds.turbulenceTexture = repeat(t)
     }),
-    load(bin(CLOUD_SHAPE_TEXTURE_SIZE), asset('clouds/shape.bin')).then(t => {
-      t.format = THREE.RedFormat
-      t.minFilter = t.magFilter = THREE.LinearFilter
-      clouds.shapeTexture = repeat(t)
-    }),
     load(bin(CLOUD_SHAPE_DETAIL_TEXTURE_SIZE), asset('clouds/shape_detail.bin')).then(t => {
       t.format = THREE.RedFormat
       t.minFilter = t.magFilter = THREE.LinearFilter
@@ -81,6 +76,9 @@ export function createSky(renderer, { lat, lon, azimuth, pitch }) {
       clouds.stbnTexture = t
     }),
   ]).then(() => {})
+
+  // Generated on the GPU rather than downloading shape.bin (2.1 MB), to keep the first load under 5 MB.
+  clouds.shapeTexture = new CloudShape()
 
   const defaults = [{ ...clouds.cloudLayers[0] }, { ...clouds.cloudLayers[1] }]
 

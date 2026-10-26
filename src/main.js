@@ -3,6 +3,7 @@ import catalog from './places/catalog.json'
 import { createPhotoLayer } from './scene/photoLayer.js'
 import { createOverlay } from './scene/overlay.js'
 import { createSky } from './sky/sky.js'
+import { createQualityController, hasWebGL2 } from './perf/quality.js'
 import { ANCHORS } from './weather/anchors.js'
 
 // Debug/review URL: ?scene=<id>&anchor=<key>&hour=<UTC hour on 26 Oct 2026>
@@ -13,6 +14,11 @@ const hour = Number(params.get('hour') ?? ANCHOR_HOURS[anchorKey])
 const entry = catalog.find(e => e.id === (params.get('scene') ?? 'nancy'))
 
 const view = document.getElementById('view')
+// three.js needs WebGL2: without it, the photo alone with its own sky.
+if (!hasWebGL2()) {
+  view.innerHTML = `<img src="${import.meta.env.BASE_URL + entry.photo}" alt="" style="width:100%;height:100%;object-fit:cover">`
+  throw new Error('WebGL2 unavailable: photo only')
+}
 const renderer = new THREE.WebGLRenderer({ depth: false })
 renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5))
 renderer.toneMapping = THREE.NoToneMapping
@@ -37,10 +43,14 @@ function resize() {
 addEventListener('resize', resize)
 resize()
 
+const quality = createQualityController()
 const clock = new THREE.Clock()
 Promise.all([sky.ready, photo.load(entry)]).then(() => renderer.setAnimationLoop(() => {
-  const dt = Math.min(clock.getDelta(), .05), t = clock.elapsedTime
+  const raw = clock.getDelta(), dt = Math.min(raw, .05), t = clock.elapsedTime
+  const level = quality.frame(raw, document.hidden)
+  if (level === 'photo-only') photo.fallback = true
+  else if (level) sky.setQuality(level)
   photo.setFlash(overlay.draw(dt, t, effects))
-  sky.render(dt)
+  if (!photo.fallback) sky.render(dt)
   photo.render(t)
 }))
