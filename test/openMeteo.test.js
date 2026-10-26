@@ -29,3 +29,13 @@ test('an unreachable API never rejects', async () => {
 test('an HTTP error is reported as unavailable', async () => {
   expect(await loadWeather(48.69, 6.18, async () => ({ ok: false, status: 429 }))).toEqual({ weather: null, error: true })
 })
+
+test('works on browsers without AbortSignal.timeout (iOS 15)', async () => {
+  const original = AbortSignal.timeout
+  AbortSignal.timeout = undefined
+  try {
+    expect((await fetchCurrent(48.69, 6.18, okFetch)).weatherCode).toBe(3)
+  } finally {
+    AbortSignal.timeout = original
+  }
+})

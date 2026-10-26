@@ -16,15 +16,17 @@ export function createOverlay() {
   const g = canvas.getContext('2d')
   const texture = new CanvasTexture(canvas)
   const birds = Array.from({ length: 7 }, (_, i) => ({ x: -.1 - i * .05, y: .1 + Math.random() * .12, ph: Math.random() * 6, v: .03 + Math.random() * .01 }))
-  let flash = 0, nextFlash = 2, bolt = null
+  let flash = 0, nextFlash = 2, bolt = null, dirty = true
 
   return {
     texture,
-    resize(w, h) { canvas.width = w; canvas.height = h },
+    resize(w, h) { canvas.width = w; canvas.height = h; dirty = true },
     // Returns the flash brightness for this frame (0 when no lightning).
     draw(dt, t, effects) {
       const W = canvas.width, H = canvas.height
-      g.clearRect(0, 0, W, H)
+      const drawing = effects.birds > .5 || bolt != null || (effects.storm > .5 && flash > .35)
+      // Upload the canvas only while something is drawn, plus once to clear it.
+      if (drawing || dirty) g.clearRect(0, 0, W, H)
       if (effects.birds > .5) {
         g.strokeStyle = 'rgba(20,20,25,1)'; g.lineWidth = 1.6; g.beginPath()
         for (const b of birds) {
@@ -43,7 +45,8 @@ export function createOverlay() {
         bolt.forEach((line, i) => { g.lineWidth = i ? .6 : 1.2; g.beginPath(); line.forEach(([x, y], j) => j ? g.lineTo(x, y) : g.moveTo(x, y)); g.stroke() })
         g.restore()
       } else bolt = null
-      texture.needsUpdate = true
+      if (drawing || dirty) texture.needsUpdate = true
+      dirty = drawing
       return flash > 0 ? flash * (Math.random() < .7 ? 1 : .2) : 0
     },
   }

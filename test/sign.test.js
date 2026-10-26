@@ -41,3 +41,12 @@ test('a long name without hyphen still fits', () => {
   expect(r.scale).toBeGreaterThanOrEqual(.5)
   expect(r.lines.length).toBeLessThanOrEqual(2)
 })
+
+test('long names split after the hyphen nearest the middle', () => {
+  for (const name of ['Saint-Rémy-en-Bouzemont-Saint-Genest-et-Isson', 'Saint-Germain-de-la-Grange-sur-Marne-et-Loire']) {
+    const { lines } = layoutSignText(name)
+    expect(lines[0].endsWith('-')).toBe(true)
+    expect(lines[1].startsWith('-')).toBe(false)
+    expect(lines.join('')).toBe(name.toUpperCase())
+  }
+})

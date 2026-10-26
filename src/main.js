@@ -6,7 +6,7 @@ import { createOverlay } from './scene/overlay.js'
 import { createPhotoLayer } from './scene/photoLayer.js'
 import { createSky } from './sky/sky.js'
 import { sunElevationDeg } from './sky/sun.js'
-import { showCaption } from './ui/caption.js'
+import { creditHtml, showCaption } from './ui/caption.js'
 import { renderComprendre, renderLesson } from './ui/comprendre.js'
 import { drawDiagrams } from './lessons/diagrams.js'
 import { createLessonPlayer, lessonDate, listPublished } from './lessons/player.js'
@@ -37,10 +37,20 @@ const storage = {
 
 const state = { commune: null, weather: null, error: false, families: null, effects: ANCHORS.cloudy.effects, token: 0 }
 
-// three.js needs WebGL2: without it, the photo alone with its own sky.
+// three.js needs WebGL2: without it, the photo alone with its own sky, still searchable and credited.
 if (!hasWebGL2()) {
-  const entry = forcedEntry ?? resolveScene(storage.get() ?? NANCY, catalog).entry
-  view.innerHTML = `<img src="${BASE + entry.photo}" alt="" style="object-fit:cover">`
+  const img = document.createElement('img')
+  img.alt = ''
+  img.style.objectFit = 'cover'
+  view.append(img)
+  const showPhoto = c => {
+    const { entry } = resolveScene(c, catalog)
+    img.src = BASE + entry.photo
+    $('credit').innerHTML = creditHtml(entry.credit)
+    $('caption').textContent = c.name
+  }
+  showPhoto(storage.get() ?? NANCY)
+  mountSearch($('q'), $('suggestions'), c => { storage.set(c); showPhoto(c) })
   throw new Error('WebGL2 unavailable: photo only')
 }
 
@@ -88,7 +98,8 @@ const player = createLessonPlayer({
   },
   onStep(step, index, lesson) {
     const c = state.commune
-    sky.setDate(step.time ? lessonDate(step.time, c.lat, c.lon) : now())
+    // Lesson skies are daytime unless a step says otherwise, whatever the hour of the visit.
+    sky.setDate(lessonDate(step.time ?? 'day', c.lat, c.lon))
     drawDiagrams($('diagrams'), step.diagrams, step.inset)
     photo.setTornado(step.tornado ?? null)
     renderLesson($('panel'), { step, index, lesson, onPrev: () => player.prev(), onNext: () => player.next(), onStop: () => player.stop() })
@@ -121,10 +132,15 @@ async function show(commune, entryOverride) {
   // Regional squares stand in for the commune: the sky (sun, time) is the commune's own.
   sky.setView(entry.kind === 'city' ? entry : { ...entry, lat: commune.lat, lon: commune.lon })
   applySky()
-  await photo.load(entry, signText)
+  try {
+    if (!await photo.load(entry, signText)) return
+  } catch {
+    // Keep the previous photo rather than a half-switched scene.
+    if (token === state.token) $('caption').textContent = `${commune.name} · photo indisponible`
+    return
+  }
   if (token !== state.token) return
-  const { author, license, url } = entry.credit
-  $('credit').innerHTML = `Photo : <a href="${url}" target="_blank" rel="noopener">${author}</a>, ${license}`
+  $('credit').innerHTML = creditHtml(entry.credit)
   refreshWeather()
 }
 
@@ -152,7 +168,8 @@ const first = forcedEntry
   ? show({ code: forcedEntry.code, name: forcedEntry.name, region: forcedEntry.code, lat: forcedEntry.lat ?? 46.6, lon: forcedEntry.lon ?? 2.4 }, forcedEntry)
   : show(storage.get() ?? NANCY)
 if (params.has('tornado')) first.then(() => photo.setTornado({ x: .55, disparity: Number(params.get('tornado')), intensity: 1 }))
-Promise.all([sky.ready, first]).then(() => renderer.setAnimationLoop(() => {
+// A sky that fails to load degrades to the photo alone; the loop always starts.
+Promise.all([sky.ready.catch(() => { photo.fallback = true }), first.catch(() => {})]).then(() => renderer.setAnimationLoop(() => {
   const raw = clock.getDelta(), dt = Math.min(raw, .05), t = clock.elapsedTime
   const level = quality.frame(raw, document.hidden)
   if (level === 'photo-only') photo.fallback = true

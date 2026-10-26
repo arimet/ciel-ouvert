@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { lightsToMask } from './lights.js'
 import { drawSign, homography } from './sign.js'
 import { cropWindow } from './crop.js'
+import { createLatest } from './latest.js'
 
 const vertexShader = /* glsl */ `
   varying vec2 vUv; varying vec2 sUv; uniform vec2 scale, offset;
@@ -125,6 +126,7 @@ export function createPhotoLayer(renderer, overlayTexture) {
   const loader = new THREE.TextureLoader()
   const u = material.uniforms
   let photoAspect = 1.5, viewAspect = 1, focusX = .5, tornado = null
+  const latest = createLatest()
 
   const fit = () => {
     const { scale, offset } = cropWindow(viewAspect, photoAspect, focusX)
@@ -135,9 +137,15 @@ export function createPhotoLayer(renderer, overlayTexture) {
   return {
     get fallback() { return u.fallback.value > .5 },
     set fallback(v) { u.fallback.value = v ? 1 : 0 },
+    // Resolves false when a newer load started meanwhile: its textures are dropped, nothing changes on screen.
     async load(entry, signText = null) {
+      const token = latest.begin()
       const base = import.meta.env.BASE_URL
       const [map, depth] = await Promise.all([loader.loadAsync(base + entry.photo), loader.loadAsync(base + entry.depth)])
+      if (!latest.isCurrent(token)) {
+        map.dispose(); depth.dispose()
+        return false
+      }
       u.map.value?.dispose(); u.depth.value?.dispose(); u.lights.value?.dispose()
       u.map.value = map
       u.depth.value = depth
@@ -157,6 +165,7 @@ export function createPhotoLayer(renderer, overlayTexture) {
       photoAspect = map.image.width / map.image.height
       u.aspect.value = photoAspect
       fit()
+      return true
     },
     setEffects(e) {
       u.tint.value.set(...e.tint)

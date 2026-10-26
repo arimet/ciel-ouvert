@@ -30,3 +30,11 @@ test('caption when the weather is unavailable', () => {
 test('caption while loading', () => {
   expect(captionText({ name: 'Nancy', weather: null, error: false })).toBe('Nancy')
 })
+
+test('credit links the licence and says the photo was modified', async () => {
+  const { creditHtml } = await import('../src/ui/caption.js')
+  expect(creditHtml({ author: 'Krzysztof Golik', license: 'CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:X.jpg' })).toBe(
+    'Photo : <a href="https://commons.wikimedia.org/wiki/File:X.jpg" target="_blank" rel="noopener">Krzysztof Golik</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr" target="_blank" rel="noopener">CC BY-SA 4.0</a>, modifiée')
+  expect(creditHtml({ author: 'A', license: 'CC0', url: 'u' })).toContain('https://creativecommons.org/publicdomain/zero/1.0/deed.fr')
+  expect(creditHtml({ author: '<b>', license: 'CC BY 2.0', url: 'u' })).toContain('&lt;b&gt;')
+})

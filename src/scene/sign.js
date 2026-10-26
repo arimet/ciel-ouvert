@@ -28,9 +28,11 @@ export function layoutSignText(name, maxChars = MAX) {
   const text = name.toUpperCase()
   if (text.length <= maxChars) return { lines: [text], scale: 1 }
   if (text.length <= maxChars * 2) return { lines: [text], scale: maxChars / text.length }
+  // Cut after the hyphen nearest the middle (the hyphen stays on line 1); the middle if there is none.
   const mid = text.length / 2
-  let cut = Math.round(mid)
-  for (let i = 0; i < text.length; i++) if (text[i] === '-' && Math.abs(i + 1 - mid) < Math.abs(cut - mid)) cut = i + 1
+  let cut = -1
+  for (let i = 0; i < text.length; i++) if (text[i] === '-' && (cut < 0 || Math.abs(i + 1 - mid) < Math.abs(cut - mid))) cut = i + 1
+  if (cut < 0) cut = Math.round(mid)
   const lines = [text.slice(0, cut), text.slice(cut)]
   return { lines, scale: Math.max(.5, maxChars / Math.max(...lines.map(l => l.length))) }
 }

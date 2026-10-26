@@ -23,3 +23,18 @@ export function captionText({ name, weather, error, now = new Date() }) {
 export function showCaption(el, state) {
   el.textContent = captionText(state)
 }
+
+const escape = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c])
+
+function licenseUrl(license) {
+  if (license === 'CC0') return 'https://creativecommons.org/publicdomain/zero/1.0/deed.fr'
+  const m = license.match(/^CC (BY(?:-SA)?) ([\d.]+)/)
+  return m ? `https://creativecommons.org/licenses/${m[1].toLowerCase()}/${m[2]}/deed.fr` : null
+}
+
+// Attribution required by CC licences: author, licence, and the fact that the photo is modified (cropped, sky replaced).
+export function creditHtml({ author, license, url }) {
+  const link = (href, text) => `<a href="${escape(href)}" target="_blank" rel="noopener">${escape(text)}</a>`
+  const lic = licenseUrl(license)
+  return `Photo : ${link(url, author)}, ${lic ? link(lic, license) : escape(license)}, modifiée`
+}

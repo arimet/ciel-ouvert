@@ -2,7 +2,10 @@ const FIELDS = 'temperature_2m,weather_code,cloud_cover_low,cloud_cover_mid,clou
 
 export async function fetchCurrent(lat, lon, fetchFn = fetch) {
   const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=${FIELDS}&timezone=auto`
-  const res = await fetchFn(url, { signal: AbortSignal.timeout(8000) })
+  // AbortController rather than AbortSignal.timeout, missing before Safari 16 (iOS 15).
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), 8000)
+  const res = await fetchFn(url, { signal: controller.signal }).finally(() => clearTimeout(timer))
   if (!res.ok) throw new Error(`Open-Meteo ${res.status}`)
   const { current: c, utc_offset_seconds } = await res.json()
   return {
