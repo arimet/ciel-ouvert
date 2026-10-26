@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { lightsToMask } from './lights.js'
 
 const vertexShader = /* glsl */ `
   varying vec2 vUv; varying vec2 sUv; uniform vec2 scale;
@@ -6,9 +7,9 @@ const vertexShader = /* glsl */ `
 
 // Depth map = disparity from Depth Anything: 1 near, 0 at infinity (the sky).
 const fragmentShader = /* glsl */ `
-  uniform sampler2D map, depth, overlay;
+  uniform sampler2D map, depth, overlay, lights;
   uniform vec3 tint, fogCol;
-  uniform float aspect, time, fog, rain, flash, night, maskThreshold, fallback;
+  uniform float aspect, time, fog, rain, snow, flash, night, maskThreshold, fallback;
   varying vec2 vUv; varying vec2 sUv;
   float h1(float x){ return fract(sin(x * 91.7) * 43758.5453); }
   float h(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7))) * 43758.5453); }
@@ -25,8 +26,18 @@ const fragmentShader = /* glsl */ `
     float on = step(.35, h1(c + floor(cyc) * 13.1));
     return w * on * smoothstep(0., len * .3, y) * smoothstep(len, len * .5, y);
   }
+  // Round flakes drifting sideways, slower than rain.
+  float snowLayer(vec2 uv, float cells, float speed, float size){
+    uv.x = uv.x * aspect + sin(uv.y * 6. + time * .8) * .02;
+    uv.y += time * speed;
+    vec2 g = uv * cells, id = floor(g), f = fract(g) - .5;
+    vec2 off = vec2(h(id), h(id + 7.)) - .5;
+    return step(.45, h(id + 3.)) * smoothstep(size, size * .3, length(f - off * .6));
+  }
   void main(){
     vec3 photo = texture2D(map, vUv).rgb * tint * (1. + flash * .8);
+    // Windows and lamps light up at night, with a warm glow.
+    photo += vec3(1., .74, .4) * texture2D(lights, vUv).r * night * .9;
     float disp = texture2D(depth, vUv).r;
     float m = max(smoothstep(maskThreshold, maskThreshold + .035, disp), fallback);
     float dist = 1. / (disp + .04);
@@ -44,6 +55,12 @@ const fragmentShader = /* glsl */ `
               + rainLayer(sUv, 260., 1., .03) * step(disp, .12) * .14;
       col += vec3(.75, .8, .88) * r * rain;
     }
+    if (snow > 0.) {
+      float s = snowLayer(sUv, 16., .22, .07) * step(disp, .6)
+              + snowLayer(sUv, 34., .15, .06) * step(disp, .3) * .7
+              + snowLayer(sUv, 70., .1, .05) * step(disp, .12) * .5;
+      col += vec3(.95) * s * snow * .85;
+    }
     // Lightning and birds live in the sky, so behind the buildings.
     vec4 o = texture2D(overlay, sUv);
     col = mix(col, o.rgb, o.a * (1. - m) * (1. - fogSky * .7));
@@ -60,10 +77,10 @@ export function createPhotoLayer(renderer, overlayTexture) {
     transparent: true, depthTest: false, depthWrite: false,
     blending: THREE.CustomBlending, blendSrc: THREE.OneFactor, blendDst: THREE.OneMinusSrcAlphaFactor,
     uniforms: {
-      map: { value: null }, depth: { value: null }, overlay: { value: overlayTexture },
+      map: { value: null }, depth: { value: null }, overlay: { value: overlayTexture }, lights: { value: null },
       scale: { value: new THREE.Vector2(1, 1) }, aspect: { value: 1.5 }, time: { value: 0 },
       tint: { value: new THREE.Vector3(1, 1, 1) }, fogCol: { value: new THREE.Vector3(.8, .82, .84) },
-      fog: { value: 0 }, rain: { value: 0 }, flash: { value: 0 }, night: { value: 0 },
+      fog: { value: 0 }, rain: { value: 0 }, snow: { value: 0 }, flash: { value: 0 }, night: { value: 0 },
       maskThreshold: { value: .015 }, fallback: { value: 0 },
     },
     vertexShader, fragmentShader,
@@ -88,9 +105,10 @@ export function createPhotoLayer(renderer, overlayTexture) {
     async load(entry) {
       const base = import.meta.env.BASE_URL
       const [map, depth] = await Promise.all([loader.loadAsync(base + entry.photo), loader.loadAsync(base + entry.depth)])
-      u.map.value?.dispose(); u.depth.value?.dispose()
+      u.map.value?.dispose(); u.depth.value?.dispose(); u.lights.value?.dispose()
       u.map.value = map
       u.depth.value = depth
+      u.lights.value = lightsToMask(entry.lights)
       u.maskThreshold.value = entry.maskThreshold ?? .015
       photoAspect = map.image.width / map.image.height
       u.aspect.value = photoAspect
@@ -100,6 +118,7 @@ export function createPhotoLayer(renderer, overlayTexture) {
       u.tint.value.set(...e.tint)
       u.fog.value = e.fog
       u.rain.value = e.rain
+      u.snow.value = e.snow
       u.night.value = e.night
     },
     setFlash(v) { u.flash.value = v },

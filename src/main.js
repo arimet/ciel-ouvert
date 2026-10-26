@@ -21,7 +21,8 @@ view.prepend(renderer.domElement)
 const overlay = createOverlay()
 const photo = createPhotoLayer(renderer, overlay.texture)
 const sky = createSky(renderer, entry)
-const { sky: skyParams, effects } = ANCHORS[anchorKey]
+const { sky: skyParams } = ANCHORS[anchorKey]
+const effects = { ...ANCHORS[anchorKey].effects, ...(params.has('snow') && { snow: Number(params.get('snow')), rain: 0 }) }
 sky.setParams(skyParams)
 sky.setDate(new Date(Date.UTC(2026, 9, 26, Math.floor(hour), (hour % 1) * 60)))
 photo.setEffects(effects)
