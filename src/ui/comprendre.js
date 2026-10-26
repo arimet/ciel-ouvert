@@ -35,3 +35,31 @@ function lessonList(lessons, onLesson) {
     build('button', { type: 'button', onclick: () => onLesson(l) }, [l.title, ...(l.reviewed ? [] : [build('span', { className: 'draft', textContent: ' brouillon' }, [])])]),
   ])))
 }
+
+// One lesson step in the panel: position, text, navigation, sources at the end.
+export function renderLesson(el, { step, index, lesson, onPrev, onNext, onStop }) {
+  const last = index === lesson.steps.length - 1
+  const dots = build('ol', { className: 'dots', ariaLabel: `Étape ${index + 1} sur ${lesson.steps.length}` },
+    lesson.steps.map((_, i) => build('li', { className: i === index ? 'on' : '' }, [])))
+  const nav = build('div', { className: 'lesson-nav' }, [
+    build('button', { type: 'button', textContent: '←', ariaLabel: 'Étape précédente', disabled: index === 0, onclick: onPrev }, []),
+    dots,
+    last
+      ? build('button', { type: 'button', textContent: 'Terminer', onclick: onStop }, [])
+      : build('button', { type: 'button', textContent: '→', ariaLabel: 'Étape suivante', onclick: onNext }, []),
+  ])
+  const sources = last && lesson.sources.length
+    ? build('p', { className: 'sources' }, ['Sources : ', ...lesson.sources.flatMap((s, i) => [
+      ...(i ? [', '] : []), build('a', { href: s.url, target: '_blank', rel: 'noopener', textContent: s.label }, [])])])
+    : ''
+  el.replaceChildren(build('div', { className: 'lesson' }, [
+    build('header', {}, [
+      build('h2', { textContent: lesson.title }, []),
+      build('button', { type: 'button', className: 'quit', textContent: 'Quitter', onclick: onStop }, []),
+    ]),
+    build('h3', { textContent: step.title }, []),
+    build('p', { textContent: step.text }, []),
+    sources,
+    nav,
+  ]))
+}

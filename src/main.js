@@ -7,7 +7,10 @@ import { createPhotoLayer } from './scene/photoLayer.js'
 import { createSky } from './sky/sky.js'
 import { sunElevationDeg } from './sky/sun.js'
 import { showCaption } from './ui/caption.js'
-import { renderComprendre } from './ui/comprendre.js'
+import { renderComprendre, renderLesson } from './ui/comprendre.js'
+import { drawDiagrams } from './lessons/diagrams.js'
+import { createLessonPlayer, lessonDate, listPublished } from './lessons/player.js'
+import { LESSONS, SKY_TEXTS } from './lessons/content/index.js'
 import { mountSearch } from './ui/search.js'
 import { mountTabs } from './ui/tabs.js'
 import { ANCHORS } from './weather/anchors.js'
@@ -54,7 +57,7 @@ const now = () => forcedHour == null ? new Date() : new Date(Date.UTC(2026, 9, 2
 
 function applySky() {
   const c = state.commune
-  if (!c) return
+  if (!c || player.lesson) return
   const date = now()
   const { sky: skyParams, effects } = forcedAnchor
     ? ANCHORS[forcedAnchor]
@@ -67,9 +70,38 @@ function applySky() {
   renderPanel()
 }
 
+const isProd = import.meta.env.PROD
+const published = items => listPublished(items, isProd)
+
 function renderPanel() {
-  renderComprendre($('panel'), { families: state.families, texts: {}, lessons: [], onLesson: () => {} })
+  if (player.lesson) return
+  const texts = Object.fromEntries(Object.entries(SKY_TEXTS).filter(([, t]) => !isProd || t.reviewed))
+  renderComprendre($('panel'), { families: state.families, texts, lessons: published(LESSONS), onLesson: l => player.start(l) })
 }
+
+const player = createLessonPlayer({
+  apply({ sky: skyParams, effects }) {
+    state.effects = effects
+    sky.setParams(skyParams)
+    photo.setEffects(effects)
+  },
+  onStep(step, index, lesson) {
+    const c = state.commune
+    sky.setDate(step.time ? lessonDate(step.time, c.lat, c.lon) : now())
+    drawDiagrams($('diagrams'), step.diagrams, step.inset)
+    renderLesson($('panel'), { step, index, lesson, onPrev: () => player.prev(), onNext: () => player.next(), onStop: () => player.stop() })
+  },
+  onStop() {
+    drawDiagrams($('diagrams'), [])
+    applySky()
+  },
+})
+addEventListener('keydown', e => {
+  if (!player.lesson) return
+  if (e.key === 'Escape') player.stop()
+  else if (e.key === 'ArrowRight') player.next()
+  else if (e.key === 'ArrowLeft') player.prev()
+})
 
 async function refreshWeather() {
   const c = state.commune, token = state.token
@@ -104,7 +136,10 @@ addEventListener('resize', resize)
 resize()
 
 mountSearch($('q'), $('suggestions'), c => { storage.set(c); show(c) })
-mountTabs(document.querySelectorAll('.tabs button'), $('panel'), tab => { $('caption').hidden = tab === 'comprendre' })
+mountTabs(document.querySelectorAll('.tabs button'), $('panel'), tab => {
+  $('caption').hidden = tab === 'comprendre'
+  if (tab === 'meteo') player.stop()
+})
 setInterval(() => state.commune && refreshWeather(), 15 * 60 * 1000)
 setInterval(applySky, 60 * 1000)
 
@@ -118,6 +153,7 @@ Promise.all([sky.ready, first]).then(() => renderer.setAnimationLoop(() => {
   const level = quality.frame(raw, document.hidden)
   if (level === 'photo-only') photo.fallback = true
   else if (level) sky.setQuality(level)
+  player.tick(dt)
   photo.setFlash(overlay.draw(dt, t, state.effects))
   if (!photo.fallback) sky.render(dt)
   photo.render(t)

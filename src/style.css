@@ -75,3 +75,23 @@ h1 { margin: 0; font-size: 15px; font-weight: 650; letter-spacing: .02em; white-
 @media (min-width: 768px) {
   .panel { left: auto; width: 420px; }
 }
+
+#diagrams { position: absolute; inset: 0; pointer-events: none; color: #fff; }
+#diagrams svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 1px 3px rgba(0, 0, 0, .6)); }
+#diagrams line { stroke: currentColor; stroke-width: 2.5; }
+#diagrams line.line { stroke-dasharray: 6 5; stroke-width: 1.5; }
+.diagram-label { position: absolute; transform: translate(-50%, -130%); padding: 2px 8px; border-radius: 6px; background: rgba(12, 14, 18, .6); font-size: 13px; font-weight: 600; white-space: nowrap; }
+.inset { position: absolute; top: calc(64px + env(safe-area-inset-top)); right: var(--gutter); width: min(38%, 220px); margin: 0; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: var(--glass-strong); }
+.inset img { display: block; width: 100%; height: auto; }
+.inset figcaption { padding: 4px 8px; font-size: 10px; color: var(--mute); }
+.lesson header { display: flex; align-items: baseline; gap: 12px; }
+.lesson .quit { margin-left: auto; border: 0; background: none; color: var(--mute); font: inherit; cursor: pointer; text-decoration: underline; }
+.lesson h3 { margin: 4px 0 6px; font-size: 18px; }
+.lesson-nav { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
+.lesson-nav button { min-width: 44px; height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: rgba(255, 255, 255, .1); color: var(--fg); font: inherit; font-weight: 600; cursor: pointer; }
+.lesson-nav button:disabled { opacity: .35; cursor: default; }
+.dots { display: flex; gap: 6px; margin: 0 auto; padding: 0; list-style: none; }
+.dots li { width: 7px; height: 7px; border-radius: 50%; background: rgba(255, 255, 255, .3); }
+.dots li.on { background: var(--accent); }
+.sources { font-size: 12px; color: var(--mute); }
+.sources a { color: inherit; }
