@@ -148,7 +148,7 @@ setInterval(applySky, 60 * 1000)
 const quality = createQualityController()
 const clock = new THREE.Clock()
 const first = forcedEntry
-  ? show({ code: forcedEntry.code, name: forcedEntry.name, region: forcedEntry.code, lat: forcedEntry.lat, lon: forcedEntry.lon }, forcedEntry)
+  ? show({ code: forcedEntry.code, name: forcedEntry.name, region: forcedEntry.code, lat: forcedEntry.lat ?? 46.6, lon: forcedEntry.lon ?? 2.4 }, forcedEntry)
   : show(storage.get() ?? NANCY)
 if (params.has('tornado')) first.then(() => photo.setTornado({ x: .55, disparity: Number(params.get('tornado')), intensity: 1 }))
 Promise.all([sky.ready, first]).then(() => renderer.setAnimationLoop(() => {

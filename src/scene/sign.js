@@ -35,11 +35,14 @@ export function layoutSignText(name, maxChars = MAX) {
   return { lines, scale: Math.max(.5, maxChars / Math.max(...lines.map(l => l.length))) }
 }
 
-// French town entry sign: white, red border, black capitals, 3:1.
+// French town entry sign on its post: white panel, red border, black capitals, 3:1.
+// The canvas is 600×420: panel on top, post below, transparent around, so the catalog corners span panel and post.
+
 export function drawSign(name) {
   const canvas = document.createElement('canvas')
-  canvas.width = 600; canvas.height = 200
+  canvas.width = 600; canvas.height = 420
   const g = canvas.getContext('2d')
+  g.fillStyle = '#7d8084'; g.fillRect(288, 190, 24, 230)
   g.fillStyle = '#c8102e'; g.fillRect(0, 0, 600, 200)
   g.fillStyle = '#fff'; g.fillRect(12, 12, 576, 176)
   const { lines, scale } = layoutSignText(name)

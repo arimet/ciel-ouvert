@@ -1,10 +1,11 @@
 import * as THREE from 'three'
 import { lightsToMask } from './lights.js'
 import { drawSign, homography } from './sign.js'
+import { cropWindow } from './crop.js'
 
 const vertexShader = /* glsl */ `
-  varying vec2 vUv; varying vec2 sUv; uniform vec2 scale;
-  void main(){ sUv = uv; vUv = .5 + (uv - .5) * scale; gl_Position = vec4(position.xy, 0., 1.); }`
+  varying vec2 vUv; varying vec2 sUv; uniform vec2 scale, offset;
+  void main(){ sUv = uv; vUv = offset + (uv - .5) * scale; gl_Position = vec4(position.xy, 0., 1.); }`
 
 // Depth map = disparity from Depth Anything: 1 near, 0 at infinity (the sky).
 const fragmentShader = /* glsl */ `
@@ -109,7 +110,7 @@ export function createPhotoLayer(renderer, overlayTexture) {
     blending: THREE.CustomBlending, blendSrc: THREE.OneFactor, blendDst: THREE.OneMinusSrcAlphaFactor,
     uniforms: {
       map: { value: null }, depth: { value: null }, overlay: { value: overlayTexture }, lights: { value: null }, signMap: { value: null }, signH: { value: new THREE.Matrix3() }, hasSign: { value: 0 }, signDisp: { value: 0 }, tornado: { value: new THREE.Vector3() },
-      scale: { value: new THREE.Vector2(1, 1) }, aspect: { value: 1.5 }, time: { value: 0 },
+      scale: { value: new THREE.Vector2(1, 1) }, offset: { value: new THREE.Vector2(.5, .5) }, aspect: { value: 1.5 }, time: { value: 0 },
       tint: { value: new THREE.Vector3(1, 1, 1) }, fogCol: { value: new THREE.Vector3(.8, .82, .84) },
       fog: { value: 0 }, rain: { value: 0 }, snow: { value: 0 }, flash: { value: 0 }, night: { value: 0 },
       maskThreshold: { value: .015 }, fallback: { value: 0 },
@@ -123,12 +124,13 @@ export function createPhotoLayer(renderer, overlayTexture) {
   const camera = new THREE.Camera()
   const loader = new THREE.TextureLoader()
   const u = material.uniforms
-  let photoAspect = 1.5, viewAspect = 1, tornado = null
+  let photoAspect = 1.5, viewAspect = 1, focusX = .5, tornado = null
 
-  const fit = () => u.scale.value.set(
-    viewAspect < photoAspect ? viewAspect / photoAspect : 1,
-    viewAspect < photoAspect ? 1 : photoAspect / viewAspect,
-  )
+  const fit = () => {
+    const { scale, offset } = cropWindow(viewAspect, photoAspect, focusX)
+    u.scale.value.set(...scale)
+    u.offset.value.set(...offset)
+  }
 
   return {
     get fallback() { return u.fallback.value > .5 },
@@ -141,6 +143,8 @@ export function createPhotoLayer(renderer, overlayTexture) {
       u.depth.value = depth
       u.lights.value = lightsToMask(entry.lights)
       u.maskThreshold.value = entry.maskThreshold ?? .015
+      // Regional squares keep their sign in view on narrow screens.
+      focusX = entry.sign && signText ? (entry.sign.corners[0][0] + entry.sign.corners[1][0]) / 2 : entry.focusX ?? .5
       u.signMap.value?.dispose()
       u.hasSign.value = entry.sign && signText ? 1 : 0
       if (u.hasSign.value) {

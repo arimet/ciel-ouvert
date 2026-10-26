@@ -285,5 +285,365 @@
       { "x": 0.29, "y": 0.34, "w": 0.06, "h": 0.28, "flood": true },
       { "x": 0.44, "y": 0.33, "w": 0.04, "h": 0.5, "flood": true }
     ]
+  },
+  {
+    "id": "region-11",
+    "kind": "region",
+    "code": "11",
+    "name": "Arthieul (Magny-en-Vexin)",
+    "azimuth": 180,
+    "pitch": 7,
+    "photo": "scenes/region-11/photo.webp",
+    "depth": "scenes/region-11/depth.png",
+    "credit": {
+      "author": "Pierre Poschadel",
+      "license": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Magny-en-Vexin_(95),_rue_du_Village_à_Arthieul_6.JPG"
+    },
+    "lights": [],
+    "sign": {
+      "corners": [[0.3787, 0.6668], [0.5213, 0.6668], [0.5213, 0.8], [0.3787, 0.8]],
+      "disparity": 0.5451
+    }
+  },
+  {
+    "id": "region-24",
+    "kind": "region",
+    "code": "24",
+    "name": "La Chapelle-sur-Loire",
+    "azimuth": 180,
+    "pitch": 7,
+    "photo": "scenes/region-24/photo.webp",
+    "depth": "scenes/region-24/depth.png",
+    "credit": {
+      "author": "Daniel Jolivet",
+      "license": "CC BY 2.0",
+      "url": "https://commons.wikimedia.org/wiki/File:La_Chapelle-sur-Loire_(Indre-et-Loire)_(15970976907).jpg"
+    },
+    "lights": [],
+    "sign": {
+      "corners": [[0.769, 0.7788], [0.931, 0.7788], [0.931, 0.95], [0.769, 0.95]],
+      "disparity": 0.6588
+    }
+  },
+  {
+    "id": "region-27",
+    "kind": "region",
+    "code": "27",
+    "name": "Saint-Germain-en-Montagne",
+    "azimuth": 180,
+    "pitch": 7,
+    "photo": "scenes/region-27/photo.webp",
+    "depth": "scenes/region-27/depth.png",
+    "credit": {
+      "author": "Espirat",
+      "license": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Place_centrale_du_village_de_saint-Germain-en-Montagne.jpg"
+    },
+    "lights": [],
+    "sign": {
+      "corners": [[0.0857, 0.6282], [0.2143, 0.6282], [0.2143, 0.75], [0.0857, 0.75]],
+      "disparity": 0.4627
+    }
+  },
+  {
+    "id": "region-28",
+    "kind": "region",
+    "code": "28",
+    "name": "Cernay",
+    "azimuth": 180,
+    "pitch": 7,
+    "photo": "scenes/region-28/photo.webp",
+    "depth": "scenes/region-28/depth.png",
+    "credit": {
+      "author": "ChBougui",
+      "license": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:La_place_du_village_de_Cernay.jpg"
+    },
+    "lights": [],
+    "sign": {
+      "corners": [[0.1117, 0.7647], [0.2883, 0.7647], [0.2883, 0.95], [0.1117, 0.95]],
+      "disparity": 0.7451
+    }
+  },
+  {
+    "id": "region-32",
+    "kind": "region",
+    "code": "32",
+    "name": "Prémesques",
+    "azimuth": 180,
+    "pitch": 7,
+    "photo": "scenes/region-32/photo.webp",
+    "depth": "scenes/region-32/depth.png",
+    "credit": {
+      "author": "Pierre André",
+      "license": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Prémesques_centre_du_village,_la_mairie_(2).JPG"
+    },
+    "lights": [],
+    "sign": {
+      "corners": [[0.0397, 0.6753], [0.2003, 0.6753], [0.2003, 0.85], [0.0397, 0.85]],
+      "disparity": 0.651
+    }
+  },
+  {
+    "id": "region-44",
+    "kind": "region",
+    "code": "44",
+    "name": "Durrenbach",
+    "azimuth": 180,
+    "pitch": 7,
+    "photo": "scenes/region-44/photo.webp",
+    "depth": "scenes/region-44/depth.png",
+    "credit": {
+      "author": "René Dinkel",
+      "license": "CC BY-SA 3.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Durrenbach_(rue_du_village).JPG"
+    },
+    "lights": [],
+    "sign": {
+      "corners": [[0.6853, 0.6593], [0.8147, 0.6593], [0.8147, 0.78], [0.6853, 0.78]],
+      "disparity": 0.4667
+    }
+  },
+  {
+    "id": "region-52",
+    "kind": "region",
+    "code": "52",
+    "name": "Bousse",
+    "azimuth": 180,
+    "pitch": 7,
+    "photo": "scenes/region-52/photo.webp",
+    "depth": "scenes/region-52/depth.png",
+    "credit": {
+      "author": "Labiloute",
+      "license": "CC BY-SA 3.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Bousse-Eglise-02.jpg"
+    },
+    "lights": [],
+    "sign": {
+      "corners": [[0.7817, 0.6724], [0.9183, 0.6724], [0.9183, 0.8], [0.7817, 0.8]],
+      "disparity": 0.5098
+    }
+  },
+  {
+    "id": "region-53",
+    "kind": "region",
+    "code": "53",
+    "name": "La Feuillée",
+    "azimuth": 180,
+    "pitch": 7,
+    "photo": "scenes/region-53/photo.webp",
+    "depth": "scenes/region-53/depth.png",
+    "credit": {
+      "author": "Henri Moreau",
+      "license": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:La_Feuillée_Place_des_marronniers_2.JPG"
+    },
+    "lights": [],
+    "sign": {
+      "corners": [[0.0383, 0.6476], [0.2017, 0.6476], [0.2017, 0.8], [0.0383, 0.8]],
+      "disparity": 0.6667
+    }
+  },
+  {
+    "id": "region-75",
+    "kind": "region",
+    "code": "75",
+    "name": "Genouillac",
+    "azimuth": 180,
+    "pitch": 7,
+    "photo": "scenes/region-75/photo.webp",
+    "depth": "scenes/region-75/depth.png",
+    "credit": {
+      "author": "J. N. Squire",
+      "license": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Centre-bourg_de_Genouillac_1.jpg"
+    },
+    "lights": [],
+    "sign": {
+      "corners": [[0.014, 0.6768], [0.146, 0.6768], [0.146, 0.8], [0.014, 0.8]],
+      "disparity": 0.4824
+    }
+  },
+  {
+    "id": "region-76",
+    "kind": "region",
+    "code": "76",
+    "name": "Marciac",
+    "azimuth": 180,
+    "pitch": 7,
+    "photo": "scenes/region-76/photo.webp",
+    "depth": "scenes/region-76/depth.png",
+    "credit": {
+      "author": "Renhour48",
+      "license": "CC0",
+      "url": "https://commons.wikimedia.org/wiki/File:Marciac_-_Place_de_L'Hôtel-de-Ville_21.jpg"
+    },
+    "lights": [],
+    "sign": {
+      "corners": [[0.0937, 0.8317], [0.2063, 0.8317], [0.2063, 0.95], [0.0937, 0.95]],
+      "disparity": 0.3686
+    }
+  },
+  {
+    "id": "region-84",
+    "kind": "region",
+    "code": "84",
+    "name": "Chanterelle",
+    "azimuth": 180,
+    "pitch": 7,
+    "photo": "scenes/region-84/photo.webp",
+    "depth": "scenes/region-84/depth.png",
+    "credit": {
+      "author": "Pymouss",
+      "license": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Chanterelle_15_-centre-bourg_20200812-01.jpg"
+    },
+    "lights": [],
+    "sign": {
+      "corners": [[0.789, 0.7219], [0.911, 0.7219], [0.911, 0.85], [0.789, 0.85]],
+      "disparity": 0.4235
+    }
+  },
+  {
+    "id": "region-93",
+    "kind": "region",
+    "code": "93",
+    "name": "Banon",
+    "azimuth": 180,
+    "pitch": 7,
+    "photo": "scenes/region-93/photo.webp",
+    "depth": "scenes/region-93/depth.png",
+    "credit": {
+      "author": "Véronique Pagnier",
+      "license": "CC BY-SA 3.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Commerces_à_Banon.JPG"
+    },
+    "lights": [],
+    "sign": {
+      "corners": [[0.829, 0.7048], [0.931, 0.7048], [0.931, 0.8], [0.829, 0.8]],
+      "disparity": 0.3059
+    }
+  },
+  {
+    "id": "region-94",
+    "kind": "region",
+    "code": "94",
+    "name": "Aullène",
+    "azimuth": 180,
+    "pitch": 7,
+    "photo": "scenes/region-94/photo.webp",
+    "depth": "scenes/region-94/depth.png",
+    "credit": {
+      "author": "Wikipedro",
+      "license": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Aullène,_la_place_et_l'église_San'_Nicolau-2.jpg"
+    },
+    "lights": [],
+    "sign": {
+      "corners": [[0.6307, 0.6742], [0.7693, 0.6742], [0.7693, 0.82], [0.6307, 0.82]],
+      "disparity": 0.5216
+    }
+  },
+  {
+    "id": "region-01",
+    "kind": "region",
+    "code": "01",
+    "name": "Petit-Bourg",
+    "azimuth": 180,
+    "pitch": 7,
+    "photo": "scenes/region-01/photo.webp",
+    "depth": "scenes/region-01/depth.png",
+    "credit": {
+      "author": "Enrevseluj",
+      "license": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Église_Notre-Dame-de-l'Assomption_de_Petit-Bourg_en_avril_2025.jpg"
+    },
+    "lights": [],
+    "sign": {
+      "corners": [[0.7347, 0.728], [0.8653, 0.728], [0.8653, 0.85], [0.7347, 0.85]],
+      "disparity": 0.4745
+    }
+  },
+  {
+    "id": "region-02",
+    "kind": "region",
+    "code": "02",
+    "name": "Le Diamant",
+    "azimuth": 180,
+    "pitch": 7,
+    "photo": "scenes/region-02/photo.webp",
+    "depth": "scenes/region-02/depth.png",
+    "credit": {
+      "author": "Thérèse Gaigé",
+      "license": "CC0",
+      "url": "https://commons.wikimedia.org/wiki/File:Église_Saint-Thomas_du_Diamant_(Martinique).jpg"
+    },
+    "lights": [],
+    "sign": {
+      "corners": [[0.874, 0.7341], [0.966, 0.7341], [0.966, 0.82], [0.874, 0.82]],
+      "disparity": 0.2471
+    }
+  },
+  {
+    "id": "region-03",
+    "kind": "region",
+    "code": "03",
+    "name": "Roura",
+    "azimuth": 180,
+    "pitch": 7,
+    "photo": "scenes/region-03/photo.webp",
+    "depth": "scenes/region-03/depth.png",
+    "credit": {
+      "author": "Don-vip",
+      "license": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Commissariat_municipal_et_Église_Saint-Dominique_de_Roura.jpg"
+    },
+    "lights": [],
+    "sign": {
+      "corners": [[0.1223, 0.6791], [0.2777, 0.6791], [0.2777, 0.85], [0.1223, 0.85]],
+      "disparity": 0.6196
+    }
+  },
+  {
+    "id": "region-04",
+    "kind": "region",
+    "code": "04",
+    "name": "Le Tévelave (Les Avirons)",
+    "azimuth": 180,
+    "pitch": 7,
+    "photo": "scenes/region-04/photo.webp",
+    "depth": "scenes/region-04/depth.png",
+    "credit": {
+      "author": "Clémenceau Lauret",
+      "license": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Eglise_Saint-Joseph_-_Le_Tévelave_Les_Avirons_La_Réunion_-_Vue_de_la_rue.jpg"
+    },
+    "lights": [],
+    "sign": {
+      "corners": [[0.0263, 0.6463], [0.1737, 0.6463], [0.1737, 0.85], [0.0263, 0.85]],
+      "disparity": 0.5725
+    }
+  },
+  {
+    "id": "region-06",
+    "kind": "region",
+    "code": "06",
+    "name": "M'tsangamouji",
+    "azimuth": 180,
+    "pitch": 7,
+    "photo": "scenes/region-06/photo.webp",
+    "depth": "scenes/region-06/depth.png",
+    "credit": {
+      "author": "Peyom",
+      "license": "CC BY-SA 3.0",
+      "url": "https://commons.wikimedia.org/wiki/File:M'tsangamouji_mairie.JPG"
+    },
+    "lights": [],
+    "sign": {
+      "corners": [[0.0857, 0.6799], [0.2143, 0.6799], [0.2143, 0.8], [0.0857, 0.8]],
+      "disparity": 0.4627
+    }
   }
 ]
