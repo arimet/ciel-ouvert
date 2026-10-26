@@ -56,5 +56,234 @@
       { "x": 0.093, "y": 0.39, "w": 0.017, "h": 0.09 },
       { "x": 0.88, "y": 0.37, "w": 0.02, "h": 0.09 }
     ]
+  },
+  {
+    "id": "paris",
+    "kind": "city",
+    "code": "75056",
+    "name": "Paris",
+    "lat": 48.8538,
+    "lon": 2.3015,
+    "azimuth": 314,
+    "pitch": 14,
+    "photo": "scenes/paris/photo.webp",
+    "depth": "scenes/paris/depth.png",
+    "credit": {
+      "author": "Filip Maljković",
+      "license": "CC BY-SA 2.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Eiffel_Tower_from_Champ_de_Mars,_16_February_2012.jpg"
+    },
+    "lights": [
+      { "x": 0.475, "y": 0.06, "w": 0.02, "h": 0.1, "flood": true },
+      { "x": 0.465, "y": 0.16, "w": 0.04, "h": 0.14, "flood": true },
+      { "x": 0.45, "y": 0.3, "w": 0.07, "h": 0.25, "flood": true },
+      { "x": 0.42, "y": 0.55, "w": 0.13, "h": 0.12, "flood": true },
+      { "x": 0.39, "y": 0.67, "w": 0.19, "h": 0.12, "flood": true },
+      { "x": 0.44, "y": 0.78, "w": 0.1, "h": 0.03, "grid": [8, 1] }
+    ]
+  },
+  {
+    "id": "marseille",
+    "kind": "city",
+    "code": "13055",
+    "name": "Marseille",
+    "lat": 43.2958,
+    "lon": 5.3715,
+    "azimuth": 180,
+    "pitch": 8,
+    "photo": "scenes/marseille/photo.webp",
+    "depth": "scenes/marseille/depth.png",
+    "credit": {
+      "author": "Tiia Monto",
+      "license": "CC BY-SA 3.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Marseille_-_Vieux-Port2.jpg"
+    },
+    "lights": [
+      { "x": 0.5, "y": 0.13, "w": 0.07, "h": 0.14, "flood": true },
+      { "x": 0.0, "y": 0.33, "w": 0.27, "h": 0.37, "grid": [9, 7] },
+      { "x": 0.27, "y": 0.38, "w": 0.35, "h": 0.22, "grid": [12, 4] },
+      { "x": 0.62, "y": 0.33, "w": 0.38, "h": 0.22, "grid": [12, 4] }
+    ]
+  },
+  {
+    "id": "lyon",
+    "kind": "city",
+    "code": "69123",
+    "name": "Lyon",
+    "lat": 45.7575,
+    "lon": 4.8321,
+    "azimuth": 315,
+    "pitch": 8,
+    "photo": "scenes/lyon/photo.webp",
+    "depth": "scenes/lyon/depth.png",
+    "credit": {
+      "author": "Patrick Nouhailler",
+      "license": "CC BY-SA 3.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Lyon_-_panoramio_(132).jpg"
+    },
+    "lights": [
+      { "x": 0.09, "y": 0.3, "w": 0.14, "h": 0.15, "flood": true },
+      { "x": 0.42, "y": 0.35, "w": 0.02, "h": 0.17, "flood": true },
+      { "x": 0.34, "y": 0.6, "w": 0.36, "h": 0.24, "grid": [14, 4] },
+      { "x": 0.7, "y": 0.58, "w": 0.3, "h": 0.27, "grid": [9, 4] }
+    ]
+  },
+  {
+    "id": "toulouse",
+    "kind": "city",
+    "code": "31555",
+    "name": "Toulouse",
+    "lat": 43.6042,
+    "lon": 1.4425,
+    "azimuth": 75,
+    "pitch": 6,
+    "photo": "scenes/toulouse/photo.webp",
+    "depth": "scenes/toulouse/depth.png",
+    "credit": {
+      "author": "Frédéric Neupont",
+      "license": "CC0",
+      "url": "https://commons.wikimedia.org/wiki/File:Capitole-27.jpg"
+    },
+    "lights": [
+      { "x": 0.04, "y": 0.37, "w": 0.92, "h": 0.27, "flood": true }
+    ]
+  },
+  {
+    "id": "nice",
+    "kind": "city",
+    "code": "06088",
+    "name": "Nice",
+    "lat": 43.6973,
+    "lon": 7.2701,
+    "azimuth": 325,
+    "pitch": 7,
+    "photo": "scenes/nice/photo.webp",
+    "depth": "scenes/nice/depth.png",
+    "credit": {
+      "author": "Ermell",
+      "license": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Nizza-Place_Masséna_of_Nice-4070873.jpg"
+    },
+    "lights": [
+      { "x": 0, "y": 0.4, "w": 0.27, "h": 0.2, "grid": [6, 3] },
+      { "x": 0.27, "y": 0.48, "w": 0.45, "h": 0.19, "grid": [14, 3] },
+      { "x": 0.88, "y": 0.43, "w": 0.12, "h": 0.23, "grid": [3, 3] },
+      { "x": 0, "y": 0.7, "w": 0.82, "h": 0.06, "grid": [16, 1] },
+      { "x": 0.705, "y": 0.33, "w": 0.04, "h": 0.07, "flood": true },
+      { "x": 0.54, "y": 0.5, "w": 0.025, "h": 0.04, "flood": true }
+    ]
+  },
+  {
+    "id": "nantes",
+    "kind": "city",
+    "code": "44109",
+    "name": "Nantes",
+    "lat": 47.2159,
+    "lon": -1.5508,
+    "azimuth": 70,
+    "pitch": 10,
+    "photo": "scenes/nantes/photo.webp",
+    "depth": "scenes/nantes/depth.png",
+    "credit": {
+      "author": "Jordiferrer",
+      "license": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Château_des_ducs_de_Bretagne_(Nantes)_-_2014_-_01.JPG"
+    },
+    "lights": [
+      { "x": 0.25, "y": 0.35, "w": 0.73, "h": 0.45, "flood": true },
+      { "x": 0, "y": 0.52, "w": 0.17, "h": 0.12, "grid": [8, 3] }
+    ]
+  },
+  {
+    "id": "montpellier",
+    "kind": "city",
+    "code": "34172",
+    "name": "Montpellier",
+    "lat": 43.609,
+    "lon": 3.8805,
+    "azimuth": 240,
+    "pitch": 8,
+    "photo": "scenes/montpellier/photo.webp",
+    "depth": "scenes/montpellier/depth.png",
+    "credit": {
+      "author": "Choinowski",
+      "license": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Place_de_la_Comédie_Montpellier.jpg"
+    },
+    "lights": [
+      { "x": 0.57, "y": 0.36, "w": 0.38, "h": 0.25, "grid": [11, 4] },
+      { "x": 0.31, "y": 0.47, "w": 0.15, "h": 0.12, "flood": true },
+      { "x": 0, "y": 0.25, "w": 0.17, "h": 0.33, "grid": [5, 5] },
+      { "x": 0.55, "y": 0.55, "w": 0.42, "h": 0.06, "grid": [8, 1] }
+    ]
+  },
+  {
+    "id": "strasbourg",
+    "kind": "city",
+    "code": "67482",
+    "name": "Strasbourg",
+    "lat": 48.5815,
+    "lon": 7.7553,
+    "azimuth": 275,
+    "pitch": 9,
+    "photo": "scenes/strasbourg/photo.webp",
+    "depth": "scenes/strasbourg/depth.png",
+    "credit": {
+      "author": "Jonathan Martz",
+      "license": "CC BY-SA 3.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Absolute_cathedrale_vue_quais_01.JPG"
+    },
+    "lights": [
+      { "x": 0.5, "y": 0.2, "w": 0.04, "h": 0.27, "flood": true },
+      { "x": 0.41, "y": 0.44, "w": 0.13, "h": 0.08, "flood": true },
+      { "x": 0.6, "y": 0.43, "w": 0.37, "h": 0.27, "grid": [11, 4] },
+      { "x": 0.12, "y": 0.5, "w": 0.28, "h": 0.16, "grid": [9, 3] },
+      { "x": 0.4, "y": 0.53, "w": 0.19, "h": 0.13, "grid": [7, 3] }
+    ]
+  },
+  {
+    "id": "bordeaux",
+    "kind": "city",
+    "code": "33063",
+    "name": "Bordeaux",
+    "lat": 44.8418,
+    "lon": -0.569,
+    "azimuth": 243,
+    "pitch": 5,
+    "photo": "scenes/bordeaux/photo.webp",
+    "depth": "scenes/bordeaux/depth.png",
+    "credit": {
+      "author": "Mith",
+      "license": "CC BY-SA 3.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Place_de_la_Bourse,_Bordeaux.jpg"
+    },
+    "lights": [
+      { "x": 0, "y": 0.38, "w": 0.48, "h": 0.2, "flood": true },
+      { "x": 0.5, "y": 0.38, "w": 0.11, "h": 0.19, "flood": true },
+      { "x": 0.61, "y": 0.38, "w": 0.39, "h": 0.2, "flood": true }
+    ]
+  },
+  {
+    "id": "lille",
+    "kind": "city",
+    "code": "59350",
+    "name": "Lille",
+    "lat": 50.6367,
+    "lon": 3.0632,
+    "azimuth": 50,
+    "pitch": 8,
+    "photo": "scenes/lille/photo.webp",
+    "depth": "scenes/lille/depth.png",
+    "credit": {
+      "author": "Velvet",
+      "license": "CC BY-SA 3.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Lille_grand_place_pano.jpg"
+    },
+    "lights": [
+      { "x": 0.03, "y": 0.62, "w": 0.33, "h": 0.22, "grid": [12, 3] },
+      { "x": 0.5, "y": 0.66, "w": 0.42, "h": 0.18, "grid": [14, 3] },
+      { "x": 0.29, "y": 0.34, "w": 0.06, "h": 0.28, "flood": true },
+      { "x": 0.44, "y": 0.33, "w": 0.04, "h": 0.5, "flood": true }
+    ]
   }
 ]

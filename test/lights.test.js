@@ -14,3 +14,24 @@ test('a tiny lamp still covers at least one pixel', () => {
   expect(b.x1 - b.x0).toBeGreaterThanOrEqual(1)
   expect(b.y1 - b.y0).toBeGreaterThanOrEqual(1)
 })
+
+test('a facade zone splits into a grid of windows', async () => {
+  const { expandLights } = await import('../src/scene/lights.js')
+  const out = expandLights([{ x: 0, y: 0, w: 1, h: .5, grid: [2, 1] }], () => .9)
+  expect(out).toEqual([
+    { x: .1375, y: .1125, w: .225, h: .275, level: expect.any(Number) },
+    { x: .6375, y: .1125, w: .225, h: .275, level: expect.any(Number) },
+  ])
+})
+
+test('floodlit monuments are always lit, softer', async () => {
+  const { expandLights } = await import('../src/scene/lights.js')
+  expect(expandLights([{ x: .1, y: .1, w: .2, h: .2, flood: true }], () => 0)).toEqual([{ x: .1, y: .1, w: .2, h: .2, level: .55 }])
+})
+
+test('roughly a third of windows stay dark', async () => {
+  const { expandLights } = await import('../src/scene/lights.js')
+  let i = 0
+  const out = expandLights([{ x: 0, y: 0, w: 1, h: 1, grid: [10, 10] }], () => (i++ % 10) / 10)
+  expect(out.length).toBe(70)
+})
