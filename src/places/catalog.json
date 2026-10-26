@@ -1,0 +1,16 @@
+[
+  {
+    "id": "nancy",
+    "kind": "city",
+    "code": "54395",
+    "name": "Nancy",
+    "lat": 48.6937,
+    "lon": 6.1834,
+    "azimuth": 180,
+    "pitch": 7,
+    "photo": "scenes/nancy/photo.webp",
+    "depth": "scenes/nancy/depth.png",
+    "credit": { "author": "Krzysztof Golik", "license": "CC BY-SA 4.0", "url": "https://commons.wikimedia.org/wiki/File:City_hall_of_Nancy_(4).jpg" },
+    "lights": []
+  }
+]
