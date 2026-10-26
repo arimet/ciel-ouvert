@@ -23,7 +23,7 @@ const view = $('view')
 const BASE = import.meta.env.BASE_URL
 const NANCY = { code: '54395', name: 'Nancy', department: '54', region: '44', lat: 48.6937, lon: 6.1834, population: 104000 }
 
-// Review URL: ?scene=<id>&anchor=<key>&hour=<UTC hour on 26 Oct 2026>&snow=<0..1>&sign=<name>
+// Review URL: ?scene=<id>&anchor=<key>&hour=<UTC hour on 26 Oct 2026>&snow=<0..1>&sign=<name>&tornado=<disparity>
 const params = new URLSearchParams(location.search)
 const ANCHOR_HOURS = { clear: 13.5, cloudy: 12, rain: 11, storm: 15, fog: 8.6, sunset: 16.15, night: 21 }
 const forcedAnchor = params.get('anchor')
@@ -89,10 +89,12 @@ const player = createLessonPlayer({
     const c = state.commune
     sky.setDate(step.time ? lessonDate(step.time, c.lat, c.lon) : now())
     drawDiagrams($('diagrams'), step.diagrams, step.inset)
+    photo.setTornado(step.tornado ?? null)
     renderLesson($('panel'), { step, index, lesson, onPrev: () => player.prev(), onNext: () => player.next(), onStop: () => player.stop() })
   },
   onStop() {
     drawDiagrams($('diagrams'), [])
+    photo.setTornado(null)
     applySky()
   },
 })
@@ -148,6 +150,7 @@ const clock = new THREE.Clock()
 const first = forcedEntry
   ? show({ code: forcedEntry.code, name: forcedEntry.name, region: forcedEntry.code, lat: forcedEntry.lat, lon: forcedEntry.lon }, forcedEntry)
   : show(storage.get() ?? NANCY)
+if (params.has('tornado')) first.then(() => photo.setTornado({ x: .55, disparity: Number(params.get('tornado')), intensity: 1 }))
 Promise.all([sky.ready, first]).then(() => renderer.setAnimationLoop(() => {
   const raw = clock.getDelta(), dt = Math.min(raw, .05), t = clock.elapsedTime
   const level = quality.frame(raw, document.hidden)

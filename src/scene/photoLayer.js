@@ -13,6 +13,7 @@ const fragmentShader = /* glsl */ `
   uniform float hasSign, signDisp;
   uniform vec3 tint, fogCol;
   uniform float aspect, time, fog, rain, snow, flash, night, maskThreshold, fallback;
+  uniform vec3 tornado; // x on screen, disparity, intensity
   varying vec2 vUv; varying vec2 sUv;
   float h1(float x){ return fract(sin(x * 91.7) * 43758.5453); }
   float h(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7))) * 43758.5453); }
@@ -61,6 +62,23 @@ const fragmentShader = /* glsl */ `
     vec3 fc = fogCol * (.92 + .16 * wisps);
     float a = m + (1. - m) * fogSky;
     vec3 col = mix(photo, fc, fogF) * m + fc * (1. - m) * fogSky;
+    // Tornado: a rotating funnel from the cloud base to the ground, hidden by anything nearer than it.
+    if (tornado.z > 0.) {
+      float near = smoothstep(.05, .35, tornado.y);
+      float ground = mix(.42, .1, near);
+      float y = sUv.y - ground;
+      float cx = tornado.x + sin(sUv.y * 7. + time * 1.3) * .012 * (1. + y * 3.);
+      float halfW = (.005 + pow(max(y, 0.), 1.8) * .3) * (1. + near * 1.4) / aspect;
+      float u = (sUv.x - cx) / halfW;
+      float swirl = fbm(vec2(u * 2.5 + time * 3.5, sUv.y * (24. + near * 30.) - time * .8));
+      float body = smoothstep(1., .25, abs(u)) * step(0., y) * (.3 + .7 * swirl * swirl * 1.6) * smoothstep(1., .55, sUv.y);
+      float debris = smoothstep(1.3, 0., length(vec2((sUv.x - cx) * aspect * 7. / (1. + near * 2.), y * 22.))) * (.4 + .6 * fbm(vec2(sUv.x * 60. + time * 4., sUv.y * 40.)));
+      float ta = clamp(body + debris * .8, 0., 1.) * tornado.z * step(disp, tornado.y + .01);
+      vec3 tc = mix(mix(vec3(.24, .25, .27), vec3(.5, .52, .55), swirl), vec3(.36, .3, .24), debris) * tint;
+      col = tc * ta + col * (1. - ta);
+      a = ta + a * (1. - ta);
+      col *= 1. - tornado.z * .25;
+    }
     // Each rain layer shows only in front of what is farther than it.
     if (rain > 0.) {
       float r = rainLayer(sUv, 45., 1.7, .12) * step(disp, .6) * .22
@@ -90,7 +108,7 @@ export function createPhotoLayer(renderer, overlayTexture) {
     transparent: true, depthTest: false, depthWrite: false,
     blending: THREE.CustomBlending, blendSrc: THREE.OneFactor, blendDst: THREE.OneMinusSrcAlphaFactor,
     uniforms: {
-      map: { value: null }, depth: { value: null }, overlay: { value: overlayTexture }, lights: { value: null }, signMap: { value: null }, signH: { value: new THREE.Matrix3() }, hasSign: { value: 0 }, signDisp: { value: 0 },
+      map: { value: null }, depth: { value: null }, overlay: { value: overlayTexture }, lights: { value: null }, signMap: { value: null }, signH: { value: new THREE.Matrix3() }, hasSign: { value: 0 }, signDisp: { value: 0 }, tornado: { value: new THREE.Vector3() },
       scale: { value: new THREE.Vector2(1, 1) }, aspect: { value: 1.5 }, time: { value: 0 },
       tint: { value: new THREE.Vector3(1, 1, 1) }, fogCol: { value: new THREE.Vector3(.8, .82, .84) },
       fog: { value: 0 }, rain: { value: 0 }, snow: { value: 0 }, flash: { value: 0 }, night: { value: 0 },
@@ -105,7 +123,7 @@ export function createPhotoLayer(renderer, overlayTexture) {
   const camera = new THREE.Camera()
   const loader = new THREE.TextureLoader()
   const u = material.uniforms
-  let photoAspect = 1.5, viewAspect = 1
+  let photoAspect = 1.5, viewAspect = 1, tornado = null
 
   const fit = () => u.scale.value.set(
     viewAspect < photoAspect ? viewAspect / photoAspect : 1,
@@ -144,9 +162,19 @@ export function createPhotoLayer(renderer, overlayTexture) {
       u.night.value = e.night
     },
     setFlash(v) { u.flash.value = v },
+    // t: { x, disparity: number | [from, to], intensity, duration } — disparity grows as the tornado comes closer.
+    setTornado(t) {
+      tornado = t && { ...t, start: u.time.value }
+      if (!t) u.tornado.value.set(0, 0, 0)
+    },
     resize(w, h) { viewAspect = w / h; fit() },
     render(t) {
       u.time.value = t
+      if (tornado) {
+        const [from, to] = [].concat(tornado.disparity, tornado.disparity)
+        const k = Math.min(1, (t - tornado.start) / (tornado.duration ?? 8))
+        u.tornado.value.set(tornado.x, from + (to - from) * k, tornado.intensity)
+      }
       renderer.autoClear = false
       renderer.render(scene, camera)
     },
