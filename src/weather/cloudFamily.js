@@ -15,6 +15,9 @@
 // | 20 % <= high < 70 %                         | cirrus         | high     |
 // | none of the above                           | clear          | none     |
 
+// Set to true once Anthony has reviewed this table; until then production hides the phrases.
+export const RULES_REVIEWED = false
+
 const PHRASES = {
   cumulonimbus: 'Probablement un cumulonimbus, le nuage d’orage.',
   fog: 'Probablement du brouillard, un nuage posé au sol.',

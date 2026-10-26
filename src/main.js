@@ -15,7 +15,7 @@ import { mountSearch } from './ui/search.js'
 import { mountTabs } from './ui/tabs.js'
 import { ANCHORS } from './weather/anchors.js'
 import { blendWeather } from './weather/blend.js'
-import { probableCloudFamilies } from './weather/cloudFamily.js'
+import { probableCloudFamilies, RULES_REVIEWED } from './weather/cloudFamily.js'
 import { loadWeather } from './weather/openMeteo.js'
 
 const $ = id => document.getElementById(id)
@@ -76,7 +76,8 @@ const published = items => listPublished(items, isProd)
 function renderPanel() {
   if (player.lesson) return
   const texts = Object.fromEntries(Object.entries(SKY_TEXTS).filter(([, t]) => !isProd || t.reviewed))
-  renderComprendre($('panel'), { families: state.families, texts, lessons: published(LESSONS), onLesson: l => player.start(l) })
+  const families = isProd && !RULES_REVIEWED && state.families ? [] : state.families
+  renderComprendre($('panel'), { families, texts, lessons: published(LESSONS), onLesson: l => player.start(l) })
 }
 
 const player = createLessonPlayer({

@@ -19,6 +19,7 @@ function section(title, body) {
 
 function skyOfTheMoment(families, texts) {
   if (!families) return build('p', { className: 'muted', textContent: 'Chargement de la météo…' }, [])
+  if (!families.length) return build('p', { className: 'muted', textContent: 'Les explications sont en cours de relecture.' }, [])
   const items = families.map(f => {
     const t = texts[f.key]
     return build('li', {}, [
