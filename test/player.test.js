@@ -83,3 +83,12 @@ test('lesson times follow the commune solar time', async () => {
     expect(dawn).toBeGreaterThan(-6); expect(dawn).toBeLessThan(10)
   }
 })
+
+test('a field only the next step sets survives the tween', () => {
+  const { p, apply } = player()
+  p.start({ ...lesson, steps: [{ anchor: 'clear' }, { anchor: 'clear', sky: { mid: { shapeAmount: .4 } } }] })
+  p.tick(1)
+  p.next()
+  p.tick(5)
+  expect(apply.mock.lastCall[0].sky.mid.shapeAmount).toBe(.4)
+})

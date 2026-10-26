@@ -1,6 +1,6 @@
 // The 7 skies validated by eye on the prototype. Live weather is always a blend of these.
-const LOW = { altitude: 750, height: 650, densityScale: .2, coverageFilterWidth: .6 }
-const MID = { altitude: 1000, height: 1200, densityScale: .2, coverageFilterWidth: .6 }
+const LOW = { altitude: 750, height: 650, densityScale: .2, coverageFilterWidth: .6, shapeAmount: 1, shapeDetailAmount: 1 }
+const MID = { altitude: 1000, height: 1200, densityScale: .2, coverageFilterWidth: .6, shapeAmount: 1, shapeDetailAmount: 1 }
 const EFFECTS = { tint: [1, 1, 1], fog: 0, rain: 0, snow: 0, storm: 0, night: 0, birds: 0 }
 
 function anchor({ coverage, low = {}, mid = {}, exposure = 10, ...effects }) {

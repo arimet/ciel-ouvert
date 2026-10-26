@@ -6,7 +6,8 @@ const smoothstep = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); retu
 export function lerpParams(a, b, t) {
   if (typeof a === 'number') return a + (b - a) * t
   if (Array.isArray(a)) return a.map((v, i) => lerpParams(v, b[i], t))
-  return Object.fromEntries(Object.keys(a).map(k => [k, lerpParams(a[k], b[k], t)]))
+  const keys = new Set([...Object.keys(a), ...Object.keys(b)])
+  return Object.fromEntries([...keys].map(k => [k, k in a && k in b ? lerpParams(a[k], b[k], t) : k in b ? b[k] : a[k]]))
 }
 
 const isRain = w => (w.weatherCode >= 51 && w.weatherCode <= 67) || (w.weatherCode >= 80 && w.weatherCode <= 82) || w.precipitation > 0
