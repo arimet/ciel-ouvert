@@ -23,11 +23,11 @@ export function homography(src, dst) {
 
 const MAX = 16
 
-// Sign text: up to 16 characters at full size, then smaller, then on two lines (past 20 if there is a hyphen to cut at).
+// Sign text: up to 16 characters at full size, then smaller, or on two lines when there is a hyphen to cut at.
 export function layoutSignText(name, maxChars = MAX) {
   const text = name.toUpperCase()
   if (text.length <= maxChars) return { lines: [text], scale: 1 }
-  if (text.length <= maxChars * 2 && (text.length <= 20 || !text.includes('-'))) return { lines: [text], scale: maxChars / text.length }
+  if (text.length <= maxChars * 2 && !text.includes('-')) return { lines: [text], scale: maxChars / text.length }
   // Cut after the hyphen nearest the middle (the hyphen stays on line 1); the middle if there is none.
   const mid = text.length / 2
   let cut = -1
@@ -39,8 +39,9 @@ export function layoutSignText(name, maxChars = MAX) {
 
 // Real-world size of the sign in metres: an EB10 panel as wide as the name needs, on posts 1 m high.
 export function signSize(lines) {
-  const chars = Math.max(...lines.map(l => l.length))
-  const panel = [Math.min(2, Math.max(.9, .3 + .075 * chars)), lines.length > 1 ? .68 : .45]
+  // Capitals are .24 m (one line) or .2 m (two lines) high, about half as wide.
+  const chars = Math.max(...lines.map(l => l.length)), letter = lines.length > 1 ? .104 : .125
+  const panel = [Math.min(2.4, Math.max(.9, .3 + letter * chars)), lines.length > 1 ? .8 : .5]
   const post = 1
   return { panel, post, width: panel[0], height: post + panel[1] }
 }
@@ -56,7 +57,10 @@ export function signCorners({ foot: [fx, fy], horizon }, { width, height }, aspe
     const x = x0 + along * c, z = z0 - along * s
     return [(.5 * aspect + f * x / z) / aspect, horizon + f * (eye - up) / z]
   }
-  return [project(-width / 2, height), project(width / 2, height), project(width / 2, 0), project(-width / 2, 0)]
+  const corners = [project(-width / 2, height), project(width / 2, height), project(width / 2, 0), project(-width / 2, 0)]
+  // A long name makes a wide panel: rather than leave the photo, the sign steps inward along the same ground line.
+  const over = Math.max(...corners.map(c => c[0])) - .97
+  return over > 1e-9 ? signCorners({ foot: [fx - over, fy], horizon }, { width, height }, aspect, yaw, f, eye) : corners
 }
 
 const FONT = '"Barlow Semi Condensed", "Arial Narrow", sans-serif'
@@ -67,8 +71,8 @@ const PX = 400 // canvas pixels per metre
 export async function drawSign(name) {
   const { lines } = layoutSignText(name)
   const size = signSize(lines)
-  const em = (lines.length > 1 ? .15 : .17) * PX
-  await document.fonts?.load(`600 ${em}px ${FONT}`, lines.join('')).catch(() => {})
+  const em = (lines.length > 1 ? .2 : .24) * PX
+  await document.fonts?.load(`700 ${em}px ${FONT}`, lines.join('')).catch(() => {})
   const canvas = document.createElement('canvas')
   canvas.width = Math.round(size.width * PX); canvas.height = Math.round(size.height * PX)
   const g = canvas.getContext('2d')
@@ -105,7 +109,7 @@ export async function drawSign(name) {
 
   // Capitals.
   g.fillStyle = '#151515'
-  g.font = `600 ${em}px ${FONT}`
+  g.font = `700 ${em}px ${FONT}`
   g.textAlign = 'center'; g.textBaseline = 'middle'
   if ('letterSpacing' in g) g.letterSpacing = `${em * .02}px`
   lines.forEach((l, i) => g.fillText(l, pw / 2, ph / 2 + em * .04 + (i - (lines.length - 1) / 2) * em * 1.02, pw - 2 * b1 - .08 * PX))

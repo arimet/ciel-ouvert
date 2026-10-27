@@ -15,7 +15,7 @@ import { createLessonPlayer, lessonDate, listPublished } from './lessons/player.
 import { LESSONS, SKY_TEXTS } from './lessons/content/index.js'
 import { mountSearch } from './ui/search.js'
 import { ANCHORS } from './weather/anchors.js'
-import { blendWeather } from './weather/blend.js'
+import { blendWeather, timeOfDay } from './weather/blend.js'
 import { probableCloudFamilies, RULES_REVIEWED } from './weather/cloudFamily.js'
 import { loadWeather } from './weather/openMeteo.js'
 
@@ -101,7 +101,7 @@ function applySky() {
   const hour = meteo && state.hour ? state.weather?.hours[state.hour] : null
   const date = hour ? hourDate(hour.time, state.weather.utcOffset) : now()
   const { sky: skyParams, effects } = forcedAnchor
-    ? ANCHORS[forcedAnchor]
+    ? timeOfDay(ANCHORS[forcedAnchor], sunElevationDeg(date, c.lat, c.lon))
     : blendWeather(meteo ? hour ?? state.weather : FAIR, sunElevationDeg(date, c.lat, c.lon))
   state.effects = { ...effects, ...(params.has('snow') && { snow: Number(params.get('snow')), rain: 0 }) }
   sky.setParams(skyParams)

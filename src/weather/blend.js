@@ -29,7 +29,17 @@ export function blendWeather(w, sunElevation) {
     s = lerpParams(s, ANCHORS.fog, fog)
   }
 
-  // Time of day only touches the photo's light, never the clouds.
+  const { sky, effects } = timeOfDay(s, sunElevation)
+  if (w) {
+    const toward = (w.windDirection + 180) * Math.PI / 180
+    const speed = clamp(w.windSpeed / 20, .3, 3)
+    sky.velocity = [Math.sin(toward) * speed, Math.cos(toward) * speed]
+  }
+  return { sky, effects }
+}
+
+// Time of day only touches the photo's light, never the clouds.
+export function timeOfDay(s, sunElevation) {
   const sunsetF = sunElevation >= -2 && sunElevation <= 8 ? 1 - Math.abs(sunElevation - 3) / 5 : 0
   const nightF = clamp(-sunElevation / 6, 0, 1)
   const sky = { ...s.sky }
@@ -38,12 +48,6 @@ export function blendWeather(w, sunElevation) {
     if (f <= 0) continue
     effects = { ...effects, tint: lerpParams(effects.tint, target.effects.tint, f), night: lerpParams(effects.night, target.effects.night, f), birds: lerpParams(effects.birds, target.effects.birds, f) }
     sky.exposure = lerpParams(sky.exposure, target.sky.exposure, f)
-  }
-
-  if (w) {
-    const toward = (w.windDirection + 180) * Math.PI / 180
-    const speed = clamp(w.windSpeed / 20, .3, 3)
-    sky.velocity = [Math.sin(toward) * speed, Math.cos(toward) * speed]
   }
   return { sky, effects }
 }

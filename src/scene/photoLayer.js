@@ -1,5 +1,4 @@
 import * as THREE from 'three'
-import { lightsToMask } from './lights.js'
 import { drawSign, homography, signCorners } from './sign.js'
 import { cropWindow, horizonPitch, lowestSky } from './crop.js'
 import { createLatest } from './latest.js'
@@ -10,11 +9,12 @@ const vertexShader = /* glsl */ `
 
 // Depth map = disparity from Depth Anything: 1 near, 0 at infinity (the sky).
 const fragmentShader = /* glsl */ `
-  uniform sampler2D map, mask, depth, overlay, lights, signMap;
+  uniform sampler2D map, mask, depth, overlay, signMap;
   uniform mat3 signH;
+  uniform vec2 texel; // one photo pixel, in UV
   uniform float hasSign, signDisp;
   uniform vec3 tint, fogCol;
-  uniform float aspect, time, fog, rain, snow, flash, night, fallback;
+  uniform float aspect, time, fog, rain, snow, flash, night, overcast, fallback;
   uniform vec3 tornado; // x on screen, disparity, intensity
   uniform float horizon; // screen height of the photo's lowest sky, where a far tornado touches the ground
   varying vec2 vUv; varying vec2 sUv;
@@ -41,26 +41,38 @@ const fragmentShader = /* glsl */ `
     vec2 off = vec2(h(id), h(id + 7.)) - .5;
     return step(.45, h(id + 3.)) * smoothstep(size, size * .3, length(f - off * .6));
   }
+  vec2 signUv(vec2 p){ vec3 q = signH * vec3(p, 1.); return q.xy / q.z; }
+  // The sign at a photo point, premultiplied so that blending samples leaves no dark fringe.
+  vec4 signAt(vec2 p){
+    vec2 su = signUv(p);
+    vec4 c = texture2D(signMap, su, .5) * step(0., su.x) * step(su.x, 1.) * step(0., su.y) * step(su.y, 1.);
+    return vec4(c.rgb * c.a, c.a);
+  }
   void main(){
     vec3 src = texture2D(map, vUv).rgb;
     vec3 photo = src * tint * (1. + flash * .8);
-    // At night windows and lamps glow warm; floodlights warm up the stone itself, keeping its texture.
-    vec2 lit = texture2D(lights, vUv).rg;
-    photo += (vec3(1., .74, .4) * lit.r * .9 + src * vec3(1., .78, .5) * lit.g * .9) * night;
     float disp = texture2D(depth, vUv).r;
     // Town sign: projected through its homography, in front of whatever is farther than it.
     if (hasSign > .5) {
-      vec3 q = signH * vec3(vUv, 1.);
-      vec2 su = q.xy / q.z;
-      if (all(greaterThanEqual(su, vec2(0.))) && all(lessThanEqual(su, vec2(1.))) && disp <= signDisp + .02) {
-        // A touch of blur and the photo's grain, and the light of the photo around it (overcast, rain, dusk).
-        vec4 sc = texture2D(signMap, su, .4);
-        vec3 amb = texture2D(map, vUv, 7.).rgb;
-        float lum = dot(amb, vec3(.299, .587, .114));
-        vec3 lit = sc.rgb * mix(vec3(1.), amb / max(lum, .02), .3) * clamp(lum * 1.75, .3, 1.02);
-        lit += (h(floor(vUv * 1600.)) - .5) * .035;
-        photo = mix(photo, lit * tint * (1. - night * .5), sc.a);
-        disp = signDisp;
+      vec2 su = signUv(vUv);
+      // A soft shadow below it on whatever stands close (the ground at its feet, a wall or a gate behind).
+      vec2 ss = su + vec2(0., .14);
+      float sh = texture2D(signMap, ss, 5.).a * step(0., ss.x) * step(ss.x, 1.) * step(0., ss.y) * step(ss.y, 1.);
+      photo *= 1. - .35 * sh * smoothstep(.35, 0., abs(signDisp - disp));
+      if (disp <= signDisp + .02) {
+        // Sampled on the photo's own pixel grid, so it is exactly as soft as the photo around it.
+        vec2 tp = vUv / texel - .5, f = fract(tp), p0 = (floor(tp) + .5) * texel;
+        vec4 sc = mix(mix(signAt(p0), signAt(p0 + vec2(texel.x, 0.)), f.x),
+                      mix(signAt(p0 + vec2(0., texel.y)), signAt(p0 + texel), f.x), f.y);
+        if (sc.a > .002) {
+          // The light of the photo around it (overcast, rain, dusk), brighter at the top under a sky, and its grain.
+          vec3 amb = texture2D(map, vUv, 7.).rgb;
+          float lum = dot(amb, vec3(.299, .587, .114));
+          vec3 lit = sc.rgb / sc.a * mix(vec3(1.), amb / max(lum, .02), .3) * clamp(lum * 1.75, .3, 1.02) * mix(.86, 1.04, clamp(su.y, 0., 1.));
+          lit += (h(floor(vUv * 1600.)) - .5) * .035;
+          photo = mix(photo, lit * tint * (1. - night * .5), sc.a);
+          disp = mix(disp, signDisp, step(.5, sc.a));
+        }
       }
     }
     float m = max(texture2D(mask, vUv).r, fallback);
@@ -89,6 +101,14 @@ const fragmentShader = /* glsl */ `
       a = ta + a * (1. - ta);
       col *= 1. - tornado.z * .25;
     }
+    // A night cloud deck hides the dark 3D sky: its base glows dull orange-grey from the town lights,
+    // brighter toward the horizon. Partly cloudy nights get broken patches.
+    float deck = fbm(vec2(sUv.x * aspect * 1.6 + time * .006, sUv.y * 3.2 - time * .002));
+    float k = night * smoothstep(1. - overcast - .15, 1. - overcast + .2, deck) * step(.01, overcast) * (1. - m) * (1. - fogSky);
+    float up = clamp((sUv.y - horizon) / max(1. - horizon, .1), 0., 1.);
+    vec3 glow = mix(vec3(.2, .16, .13), vec3(.08, .08, .09), up) * (.55 + .9 * deck) * (1. + flash * 2.);
+    col = col * (1. - k) + glow * k;
+    a = a * (1. - k) + k;
     // Each rain layer shows only in front of what is farther than it.
     if (rain > 0.) {
       float r = rainLayer(sUv, 45., 1.7, .12) * step(disp, .6) * .22
@@ -109,7 +129,7 @@ const fragmentShader = /* glsl */ `
     // Stars, fixed on screen since the camera never moves.
     vec2 sc = sUv * vec2(aspect, 1.) * 260.;
     float st = step(.9975, h(floor(sc))) * smoothstep(.35, 0., length(fract(sc) - .5)) * (.6 + .4 * sin(time * 2. + h(floor(sc) + 3.) * 20.));
-    col += vec3(st) * night * (1. - m);
+    col += vec3(st) * night * (1. - m) * (1. - overcast);
     gl_FragColor = vec4(col, a);
   }`
 
@@ -125,10 +145,10 @@ export function createPhotoLayer(renderer, overlayTexture) {
     transparent: true, depthTest: false, depthWrite: false,
     blending: THREE.CustomBlending, blendSrc: THREE.OneFactor, blendDst: THREE.OneMinusSrcAlphaFactor,
     uniforms: {
-      map: { value: null }, mask: { value: null }, depth: { value: null }, overlay: { value: overlayTexture }, lights: { value: null }, signMap: { value: null }, signH: { value: new THREE.Matrix3() }, hasSign: { value: 0 }, signDisp: { value: 0 }, tornado: { value: new THREE.Vector3() }, horizon: { value: .42 },
+      map: { value: null }, mask: { value: null }, depth: { value: null }, overlay: { value: overlayTexture }, signMap: { value: null }, signH: { value: new THREE.Matrix3() }, texel: { value: new THREE.Vector2(1 / 1600, 1 / 1067) }, hasSign: { value: 0 }, signDisp: { value: 0 }, tornado: { value: new THREE.Vector3() }, horizon: { value: .42 },
       scale: { value: new THREE.Vector2(1, 1) }, offset: { value: new THREE.Vector2(.5, .5) }, aspect: { value: 1.5 }, time: { value: 0 },
       tint: { value: new THREE.Vector3(1, 1, 1) }, fogCol: { value: new THREE.Vector3(.8, .82, .84) },
-      fog: { value: 0 }, rain: { value: 0 }, snow: { value: 0 }, flash: { value: 0 }, night: { value: 0 },
+      fog: { value: 0 }, rain: { value: 0 }, snow: { value: 0 }, flash: { value: 0 }, night: { value: 0 }, overcast: { value: 0 },
       fallback: { value: 0 },
     },
     vertexShader, fragmentShader,
@@ -166,12 +186,12 @@ export function createPhotoLayer(renderer, overlayTexture) {
         map.dispose(); mask.dispose(); depth.dispose()
         return false
       }
-      u.map.value?.dispose(); u.mask.value?.dispose(); u.depth.value?.dispose(); u.lights.value?.dispose(); u.signMap.value?.dispose()
+      u.map.value?.dispose(); u.mask.value?.dispose(); u.depth.value?.dispose(); u.signMap.value?.dispose()
       u.map.value = map
+      u.texel.value.set(1 / map.image.width, 1 / map.image.height)
       u.mask.value = mask
       skyBottom = lowestSky(pixels(mask.image))
       u.depth.value = depth
-      u.lights.value = lightsToMask(entry.lights)
       // Regional squares keep their sign in view on narrow screens.
       ;[focusX, focusY] = withSign ? entry.sign.foot : [entry.focusX ?? .5, .5]
       u.hasSign.value = withSign ? 1 : 0
@@ -196,6 +216,7 @@ export function createPhotoLayer(renderer, overlayTexture) {
       u.rain.value = e.rain
       u.snow.value = e.snow
       u.night.value = e.night
+      u.overcast.value = e.overcast ?? 0
     },
     setFlash(v) { u.flash.value = v },
     // t: { x, disparity: number | [from, to], intensity, duration } — disparity grows as the tornado comes closer.

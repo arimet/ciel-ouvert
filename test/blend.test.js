@@ -1,5 +1,6 @@
 import { expect, test } from 'vitest'
-import { blendWeather } from '../src/weather/blend.js'
+import { blendWeather, timeOfDay } from '../src/weather/blend.js'
+import { ANCHORS } from '../src/weather/anchors.js'
 
 const base = { cloudLow: 0, cloudMid: 0, cloudHigh: 0, precipitation: 0, snowfall: 0, weatherCode: 0, visibility: 30000, windSpeed: 10, windDirection: 270 }
 
@@ -33,4 +34,18 @@ test('sunset tints warm without changing the clouds', () => {
   const r = blendWeather(base, 3)
   expect(r.effects.tint[2]).toBeCloseTo(.62)
   expect(r.sky.coverage).toBeCloseTo(.3)
+})
+
+test('a rainy night is under a cloud deck, without stars', () => {
+  const r = blendWeather({ ...base, weatherCode: 63, cloudLow: 100, precipitation: 2 }, -20)
+  expect(r.effects.night).toBeCloseTo(1)
+  expect(r.effects.overcast).toBeGreaterThan(.9)
+})
+
+test('a clear night keeps its stars', () => expect(blendWeather(base, -20).effects.overcast).toBe(0))
+
+test('a reviewed anchor gets the time of day too', () => {
+  const r = timeOfDay(ANCHORS.rain, -20)
+  expect(r.effects.night).toBeCloseTo(1)
+  expect(r.effects.rain).toBe(ANCHORS.rain.effects.rain)
 })

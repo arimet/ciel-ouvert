@@ -34,7 +34,12 @@ test('long names shrink then wrap', () => {
 
 test('short names stay on one line at full scale', () => expect(layoutSignText('Laxou')).toEqual({ lines: ['LAXOU'], scale: 1 }))
 
-test('medium names shrink on one line', () => expect(layoutSignText('Vandœuvre-lès-Nancy')).toEqual({ lines: ['VANDŒUVRE-LÈS-NANCY'], scale: 16 / 19 }))
+test('medium names without a hyphen shrink on one line', () => expect(layoutSignText('Kaysersberg Vignoble')).toEqual({ lines: ['KAYSERSBERG VIGNOBLE'], scale: 16 / 20 }))
+
+test('a hyphenated name past 16 letters goes on two lines', () => {
+  expect(layoutSignText('Montlouis-sur-Loire').lines).toEqual(['MONTLOUIS-', 'SUR-LOIRE'])
+  expect(layoutSignText('Mauléon-Licharre').lines).toEqual(['MAULÉON-LICHARRE'])
+})
 
 test('a long name without hyphen still fits', () => {
   const r = layoutSignText('Abcdefghijklmnopqrstuvwxyzabcdefghij')
@@ -79,4 +84,9 @@ test('the panel grows with the name, and a second line makes it taller', () => {
   expect(long.panel[0]).toBeGreaterThan(short.panel[0])
   expect(two.panel[1]).toBeGreaterThan(short.panel[1])
   expect(short.height).toBeCloseTo(short.post + short.panel[1], 6)
+})
+
+test('a sign too wide for the space left at the edge of the photo slides inward', () => {
+  const corners = signCorners({ foot: [.95, .9], horizon: .7 }, { width: 2.4, height: 1.5 }, 1.5, 15)
+  expect(Math.max(...corners.map(c => c[0]))).toBeLessThanOrEqual(.97 + 1e-9)
 })

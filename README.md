@@ -23,7 +23,7 @@ URL de relecture : `?scene=<id>&anchor=<clear|cloudy|rain|storm|fog|sunset|night
 
 1. Choisir une photo libre (CC0, CC BY, CC BY-SA) sur Wikimedia Commons : prise à hauteur d'homme, avec au moins un quart de ciel.
 2. `node tools/prepare-scene.mjs <id> <url-ou-fichier>` : produit `public/scenes/<id>/photo.webp`, le masque du ciel `mask.png` et la carte de profondeur `depth.png`.
-3. Ajouter l'entrée dans `src/places/catalog.json` : code INSEE (ville) ou code région, position et direction de la prise de vue, crédits, fenêtres éclairées la nuit. Pour une place régionale, `sign: { foot: [x, y], horizon: y }` : le pied du panneau sur le sol et la hauteur des yeux dans la photo (fractions de la photo), qui donnent son échelle.
+3. Ajouter l'entrée dans `src/places/catalog.json` : code INSEE (ville) ou code région, position et direction de la prise de vue, crédits. Pour une place régionale, `sign: { foot: [x, y], horizon: y }` : le pied du panneau sur le sol et la hauteur des yeux dans la photo (fractions de la photo), qui donnent son échelle.
 
 ## Données et crédits
 
