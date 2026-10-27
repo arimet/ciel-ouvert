@@ -82,13 +82,16 @@ a { color: inherit; }
 #diagrams line { stroke: currentColor; stroke-width: 2.5; }
 #diagrams line.line { stroke-dasharray: 6 5; stroke-width: 1.5; }
 .diagram-label { position: absolute; transform: translate(-50%, -130%); padding: 2px 8px; border-radius: 6px; background: rgba(12, 14, 18, .6); font-size: 13px; font-weight: 600; white-space: nowrap; }
-.inset { position: absolute; top: calc(64px + env(safe-area-inset-top)); right: var(--gutter); width: min(38%, 220px); margin: 0; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: var(--glass-strong); }
-.inset img { display: block; width: 100%; height: auto; }
-.inset figcaption { padding: 4px 8px; font-size: 10px; color: var(--mute); }
+.photo { margin: 8px 0 10px; }
+.photo img { display: block; width: 100%; aspect-ratio: 16 / 9; max-height: min(24vh, 200px); object-fit: cover; border-radius: 12px; background: rgba(255, 255, 255, .06); }
+.photo figcaption { margin-top: 4px; font-size: 10.5px; color: var(--mute); }
+.photo figcaption a { color: inherit; }
+.families li + li { margin-top: 16px; }
 .lesson header { display: flex; align-items: baseline; gap: 12px; }
 .lesson .quit { margin-left: auto; border: 0; background: none; color: var(--mute); font: inherit; cursor: pointer; text-decoration: underline; }
 .lesson h3 { margin: 4px 0 6px; font-size: 18px; }
-.lesson-nav { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
+/* The step buttons stay in reach while a long step scrolls. */
+.lesson-nav { position: sticky; bottom: -16px; display: flex; align-items: center; gap: 12px; margin: 12px -18px -16px; padding: 10px 18px 14px; background: linear-gradient(transparent, rgba(12, 14, 18, .92) 30%); }
 .lesson-nav button { min-width: 44px; height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: rgba(255, 255, 255, .1); color: var(--fg); font: inherit; font-weight: 600; cursor: pointer; }
 .lesson-nav button:disabled { opacity: .35; cursor: default; }
 .dots { display: flex; gap: 6px; margin: 0 auto; padding: 0; list-style: none; }
@@ -175,4 +178,7 @@ body[data-view="comprendre"] .top .search { display: none; }
 @media (min-width: 768px) {
   .hours { max-width: min(100%, 720px); }
   body[data-sign="left"] #caption, body[data-sign="left"] .hours { align-self: flex-end; }
+}
+@media (min-width: 768px) {
+  body[data-view="comprendre"] .panel { max-height: calc(100vh - 150px); }
 }

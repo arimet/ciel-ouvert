@@ -49,3 +49,7 @@ test('a reviewed anchor gets the time of day too', () => {
   expect(r.effects.night).toBeCloseTo(1)
   expect(r.effects.rain).toBe(ANCHORS.rain.effects.rain)
 })
+
+test('an overcast night without rain is under a cloud deck too', () => {
+  expect(blendWeather({ ...base, weatherCode: 3, cloudLow: 100 }, -20).effects.overcast).toBeGreaterThan(.8)
+})

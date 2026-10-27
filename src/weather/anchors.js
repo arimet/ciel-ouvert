@@ -13,7 +13,7 @@ function anchor({ coverage, low = {}, mid = {}, exposure = 10, ...effects }) {
 
 export const ANCHORS = {
   clear: anchor({ coverage: .3, low: { altitude: 900, height: 1300 }, birds: 1 }),
-  cloudy: anchor({ coverage: .5, low: { altitude: 800, height: 1500, densityScale: .25 }, tint: [.95, .95, .97], overcast: .35 }),
+  cloudy: anchor({ coverage: .5, low: { altitude: 800, height: 1500, densityScale: .25 }, tint: [.95, .95, .97], overcast: .9 }),
   rain: anchor({
     coverage: .6, low: { altitude: 700, height: 1800, densityScale: .5, coverageFilterWidth: .3 },
     mid: { altitude: 1600, height: 1500, densityScale: .3 }, exposure: 6, tint: [.62, .64, .7], rain: .7, overcast: 1,

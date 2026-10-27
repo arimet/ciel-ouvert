@@ -2,7 +2,7 @@
 // Lines and arrows live in a stretched SVG; labels are HTML so text never distorts.
 const SVG = 'http://www.w3.org/2000/svg'
 
-export function drawDiagrams(el, diagrams = [], inset = null) {
+export function drawDiagrams(el, diagrams = []) {
   const svg = document.createElementNS(SVG, 'svg')
   svg.setAttribute('viewBox', '0 0 100 100')
   svg.setAttribute('preserveAspectRatio', 'none')
@@ -28,13 +28,5 @@ export function drawDiagrams(el, diagrams = [], inset = null) {
       labels.push(label)
     }
   }
-  const children = [svg, ...labels]
-  if (inset) {
-    const fig = document.createElement('figure')
-    fig.className = 'inset'
-    fig.innerHTML = `<img src="${import.meta.env.BASE_URL + inset.src}" alt=""><figcaption></figcaption>`
-    fig.querySelector('figcaption').textContent = inset.credit
-    children.push(fig)
-  }
-  el.replaceChildren(...children)
+  el.replaceChildren(svg, ...labels)
 }

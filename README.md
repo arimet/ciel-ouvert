@@ -25,11 +25,15 @@ URL de relecture : `?scene=<id>&anchor=<clear|cloudy|rain|storm|fog|sunset|night
 2. `node tools/prepare-scene.mjs <id> <url-ou-fichier>` : produit `public/scenes/<id>/photo.webp`, le masque du ciel `mask.png` et la carte de profondeur `depth.png`.
 3. Ajouter l'entrée dans `src/places/catalog.json` : code INSEE (ville) ou code région, position et direction de la prise de vue, crédits. Pour une place régionale, `sign: { foot: [x, y], horizon: y }` : le pied du panneau sur le sol et la hauteur des yeux dans la photo (fractions de la photo), qui donnent son échelle.
 
+## Photos des explications
+
+Chaque étape de leçon et chaque nuage de « Pourquoi ce ciel ? » montre une photo, déclarée dans `src/lessons/photos.js` avec son auteur et sa licence. `node tools/prepare-photo.mjs <clé> <url-ou-fichier>` la recadre en 16:9 dans `public/insets/<clé>.webp`.
+
 ## Données et crédits
 
 - Météo : [Open-Meteo](https://open-meteo.com/) ; communes : [API Géo](https://geo.api.gouv.fr/).
 - Ciel : [@takram/three-atmosphere et @takram/three-clouds](https://github.com/takram-design-engineering/three-geospatial).
 - Profondeur : Depth Anything V2 ; ciel découpé avec Segformer (ADE20K).
 - Police des panneaux : Barlow Semi Condensed (SIL Open Font License).
-- Photos : Wikimedia Commons, auteurs et licences indiqués sous chaque scène et dans `src/places/catalog.json`.
+- Photos : Wikimedia Commons, auteurs et licences indiqués sous chaque photo, dans `src/places/catalog.json` et `src/lessons/photos.js`.
 - Leçons : Atlas international des nuages (OMM), Météo-France, Keraunos, MétéoSuisse, IRM ; sources citées à la fin de chaque leçon.

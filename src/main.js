@@ -142,7 +142,7 @@ const player = createLessonPlayer({
     const c = state.commune
     // Lesson skies are daytime unless a step says otherwise, whatever the hour of the visit.
     sky.setDate(lessonDate(step.time ?? 'day', c.lat, c.lon))
-    drawDiagrams($('diagrams'), step.diagrams, step.inset)
+    drawDiagrams($('diagrams'), step.diagrams)
     photo.setTornado(step.tornado ?? null)
     const list = () => go({ view: 'comprendre', lesson: null })
     renderLesson($('panel'), { step, index, lesson, onPrev: () => player.prev(), onNext: () => player.next(), onStop: list })

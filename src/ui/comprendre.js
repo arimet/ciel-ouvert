@@ -1,3 +1,6 @@
+import { PHOTOS } from '../lessons/photos.js'
+import { creditHtml } from './caption.js'
+
 // Panels: "Pourquoi ce ciel ?" next to the weather, the lesson list over the plain.
 // Texts and lessons appear only once reviewed (drafts are flagged in dev).
 export function renderSkyOfTheMoment(el, { families, texts }) {
@@ -24,6 +27,7 @@ function skyOfTheMoment(families, texts) {
   const items = families.map(f => {
     const t = texts[f.key]
     return build('li', {}, [
+      ...(PHOTOS[f.key] ? [photo(PHOTOS[f.key])] : []),
       build('p', { className: 'phrase', textContent: f.phrase }, []),
       t ? build('p', { textContent: t.text }, []) : build('p', { className: 'muted', textContent: 'Explication en cours de relecture.' }, []),
     ])
@@ -54,14 +58,23 @@ export function renderLesson(el, { step, index, lesson, onPrev, onNext, onStop }
     ? build('p', { className: 'sources' }, ['Sources : ', ...lesson.sources.flatMap((s, i) => [
       ...(i ? [', '] : []), build('a', { href: s.url, target: '_blank', rel: 'noopener', textContent: s.label }, [])])])
     : ''
+  el.scrollTop = 0
   el.replaceChildren(build('div', { className: 'lesson' }, [
     build('header', {}, [
       build('h2', { textContent: lesson.title }, []),
       build('button', { type: 'button', className: 'quit', textContent: 'Quitter', onclick: onStop }, []),
     ]),
+    ...(PHOTOS[step.photo] ? [photo(PHOTOS[step.photo])] : []),
     build('h3', { textContent: step.title }, []),
     build('p', { textContent: step.text }, []),
     sources,
     nav,
   ]))
+}
+
+// A Commons photo of what the text explains, with its credit.
+function photo({ src, alt, credit }) {
+  const fig = build('figure', { className: 'photo' }, [build('img', { src: import.meta.env.BASE_URL + src, alt, loading: 'lazy', decoding: 'async' }, [])])
+  fig.append(build('figcaption', { innerHTML: creditHtml(credit) }, []))
+  return fig
 }
