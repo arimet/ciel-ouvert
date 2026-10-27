@@ -23,7 +23,8 @@ body { font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; -webkit-
   display: flex; align-items: center; gap: 12px;
   background: linear-gradient(rgba(0, 0, 0, .35), transparent);
 }
-h1 { margin: 0; font-size: 15px; font-weight: 650; letter-spacing: .02em; white-space: nowrap; text-shadow: 0 1px 6px rgba(0, 0, 0, .5); }
+a { color: inherit; }
+.brand { font-size: 15px; font-weight: 650; letter-spacing: .02em; white-space: nowrap; text-decoration: none; text-shadow: 0 1px 6px rgba(0, 0, 0, .5); }
 
 .search { position: relative; flex: 1; max-width: 360px; margin-left: auto; }
 #q {
@@ -40,28 +41,16 @@ h1 { margin: 0; font-size: 15px; font-weight: 650; letter-spacing: .02em; white-
 #suggestions li { padding: 8px 10px; border-radius: 8px; cursor: pointer; }
 #suggestions li[aria-selected="true"], #suggestions li:hover { background: rgba(255, 255, 255, .12); }
 
-#caption {
-  position: absolute; left: var(--gutter); right: var(--gutter); bottom: calc(82px + env(safe-area-inset-bottom));
-  margin: 0; font-size: 17px; font-weight: 550; text-shadow: 0 1px 8px rgba(0, 0, 0, .65);
-}
 
-.bottom {
-  position: absolute; left: 0; right: 0; bottom: 0;
-  padding: 10px var(--gutter) max(10px, env(safe-area-inset-bottom));
-  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
-}
 .tabs { display: flex; padding: 3px; border-radius: 999px; background: var(--glass); border: 1px solid var(--line); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
-.tabs button { border: 0; padding: 8px 16px; border-radius: 999px; background: none; color: var(--mute); font: inherit; font-weight: 600; cursor: pointer; }
-.tabs button[aria-selected="true"] { background: var(--fg); color: #111; }
-.tabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.tabs a { padding: 8px 16px; border-radius: 999px; color: var(--mute); font-weight: 600; text-decoration: none; }
+.tabs a[aria-current="page"] { background: var(--fg); color: #111; }
+.tabs a:focus-visible, .why:focus-visible, .hours button:focus-visible, .chips a:focus-visible, .last a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.why { padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--glass); color: var(--fg); font: inherit; font-weight: 600; cursor: pointer; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.why[aria-expanded="true"] { background: var(--fg); color: #111; }
 #credit { margin: 0 0 0 auto; font-size: 11px; color: var(--mute); text-shadow: 0 1px 4px rgba(0, 0, 0, .6); }
 #credit a { color: inherit; }
 
-.panel {
-  position: absolute; left: var(--gutter); right: var(--gutter); bottom: calc(64px + env(safe-area-inset-bottom));
-  max-height: 58%; overflow: auto; padding: 16px 18px; border-radius: 18px;
-  background: var(--glass-strong); border: 1px solid var(--line); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-}
 .panel[hidden] { display: none; }
 .panel h2 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--mute); }
 .panel section + section { margin-top: 18px; }
@@ -73,7 +62,7 @@ h1 { margin: 0; font-size: 15px; font-weight: 650; letter-spacing: .02em; white-
 .lessons .draft { color: var(--accent); font-size: 12px; }
 
 @media (min-width: 768px) {
-  .panel { left: auto; width: 420px; }
+  .panel { width: 420px; }
 }
 
 #diagrams { position: absolute; inset: 0; pointer-events: none; color: #fff; }
@@ -95,3 +84,83 @@ h1 { margin: 0; font-size: 15px; font-weight: 650; letter-spacing: .02em; white-
 .dots li.on { background: var(--accent); }
 .sources { font-size: 12px; color: var(--mute); }
 .sources a { color: inherit; }
+
+/* Bottom stack: panel, caption, the day hour by hour, then the bar. Each sits on the one below. */
+.dock {
+  position: absolute; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 10px;
+  padding: 0 var(--gutter) max(10px, env(safe-area-inset-bottom)); pointer-events: none;
+}
+.dock > * { pointer-events: auto; max-width: 100%; }
+#caption { margin: 0; font-size: 17px; font-weight: 550; text-shadow: 0 1px 8px rgba(0, 0, 0, .65); }
+.bottom { align-self: stretch; display: flex; align-items: center; gap: 8px 12px; flex-wrap: wrap; }
+.panel {
+  align-self: stretch; max-height: 55vh; overflow: auto; padding: 16px 18px; border-radius: 18px;
+  background: var(--glass-strong); border: 1px solid var(--line); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+}
+
+.hours {
+  display: flex; gap: 2px; padding: 4px; overflow-x: auto; scrollbar-width: none; border-radius: 18px;
+  background: var(--glass); border: 1px solid var(--line); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+}
+.hours:empty { display: none; }
+.hours::-webkit-scrollbar { display: none; }
+.hours button {
+  flex: none; width: 50px; display: grid; grid-template-rows: auto 24px auto 13px; justify-items: center; align-items: center; gap: 2px;
+  padding: 6px 0 4px; border: 0; border-radius: 14px; background: none; color: var(--fg); font: inherit; cursor: pointer;
+}
+.hours button:first-child { width: 86px; }
+.hours button:hover { background: rgba(255, 255, 255, .1); }
+.hours button[aria-pressed="true"] { background: var(--fg); color: #111; }
+.hours svg { width: 22px; height: 22px; }
+.hours .when { font-size: 12px; opacity: .75; }
+.hours .temp { font-weight: 650; font-variant-numeric: tabular-nums; }
+.hours .pop { font-size: 10.5px; line-height: 1; color: #8cc4ff; }
+.hours button[aria-pressed="true"] .pop { color: #1f5fa8; }
+
+/* Home: what to do first, over the plain. */
+.home {
+  position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center;
+  padding: max(24px, env(safe-area-inset-top)) var(--gutter) calc(48px + env(safe-area-inset-bottom));
+  background: linear-gradient(90deg, rgba(8, 10, 14, .55), rgba(8, 10, 14, .15) 60%, transparent);
+  overflow-y: auto;
+}
+.home > * { width: 100%; max-width: 560px; }
+.home h1 { margin: 0; font-size: clamp(44px, 9vw, 88px); line-height: .95; font-weight: 750; letter-spacing: -.035em; text-shadow: 0 2px 24px rgba(0, 0, 0, .35); }
+.home .lede { margin: 14px 0 26px; font-size: clamp(17px, 2.2vw, 20px); max-width: 30ch; text-shadow: 0 1px 10px rgba(0, 0, 0, .5); }
+.search.big { flex: none; margin: 0; max-width: 560px; }
+.search.big input {
+  width: 100%; padding: 16px 22px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .5);
+  background: rgba(250, 250, 248, .94); color: #14161a; font: inherit; font-size: 18px; box-shadow: 0 10px 40px rgba(0, 0, 0, .25);
+}
+.search.big input::placeholder { color: #5d6168; }
+.search.big input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+#home-suggestions {
+  position: absolute; top: calc(100% + 6px); left: 0; right: 0; margin: 0; padding: 6px; list-style: none; z-index: 2;
+  border-radius: 16px; background: rgba(250, 250, 248, .97); color: #14161a; box-shadow: 0 10px 40px rgba(0, 0, 0, .25);
+}
+#home-suggestions li { padding: 10px 14px; border-radius: 10px; cursor: pointer; }
+#home-suggestions li[aria-selected="true"], #home-suggestions li:hover { background: rgba(0, 0, 0, .07); }
+.last { margin: 12px 0 0 22px; min-height: 1.5em; text-shadow: 0 1px 8px rgba(0, 0, 0, .6); }
+.last a { color: var(--fg); font-weight: 600; }
+.invite {
+  margin-top: 36px; padding: 18px 20px; border-radius: 20px;
+  background: var(--glass-strong); border: 1px solid var(--line); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+}
+.invite h2 { margin: 0 0 4px; font-size: 18px; }
+.invite p { margin: 0 0 14px; color: var(--mute); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.chips a { display: block; padding: 9px 16px; border-radius: 999px; border: 1px solid var(--line); background: rgba(255, 255, 255, .08); font-weight: 600; text-decoration: none; }
+.chips a:hover { background: rgba(255, 255, 255, .16); }
+
+/* Which blocks each view shows. */
+body:not([data-view="home"]) .home,
+body[data-view="home"] .top, body[data-view="home"] .tabs,
+body:not([data-view="meteo"]) #caption, body:not([data-view="meteo"]) .hours, body:not([data-view="meteo"]) .why,
+body[data-view="comprendre"] .top .search { display: none; }
+@media (max-width: 420px) {
+  .tabs a, .why { padding: 8px 12px; }
+}
+@media (min-width: 768px) {
+  .hours { max-width: min(100%, 720px); }
+  body[data-sign="left"] #caption, body[data-sign="left"] .hours { align-self: flex-end; }
+}

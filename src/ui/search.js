@@ -13,7 +13,7 @@ export function mountSearch(input, list, onPick) {
   const render = () => {
     list.replaceChildren(...results.map((c, i) => {
       const li = document.createElement('li')
-      li.id = `commune-${i}`
+      li.id = `${list.id}-${i}`
       li.role = 'option'
       li.ariaSelected = String(i === active)
       li.textContent = `${c.name} (${c.department})`
@@ -22,7 +22,7 @@ export function mountSearch(input, list, onPick) {
     }))
     list.hidden = results.length === 0
     input.setAttribute('aria-expanded', String(!list.hidden))
-    if (active >= 0) input.setAttribute('aria-activedescendant', `commune-${active}`)
+    if (active >= 0) input.setAttribute('aria-activedescendant', `${list.id}-${active}`)
   }
   const pick = i => {
     const c = results[i]

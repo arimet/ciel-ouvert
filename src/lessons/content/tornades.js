@@ -28,7 +28,7 @@ export default {
     },
     {
       title: 'L’entonnoir descend',
-      text: 'Sous le courant ascendant, la rotation se resserre et s’accélère jusqu’au sol. L’entonnoir s’approche ici de la place : les bâtiments le cachent tant qu’il est derrière eux.',
+      text: 'Sous le courant ascendant, la rotation se resserre et s’accélère jusqu’au sol. L’entonnoir s’approche de la plaine : les arbres le cachent tant qu’il passe derrière eux.',
       anchor: 'storm',
       tornado: { ...far, disparity: [.04, .16], duration: 12 },
     },

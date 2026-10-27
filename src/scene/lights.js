@@ -19,7 +19,7 @@ const r4 = v => Math.round(v * 1e4) / 1e4
 
 // Catalog lights: plain rects, facade zones split into window grids, or floodlit monuments.
 // About a third of windows stay dark; the choice is seeded so a scene always looks the same.
-export function expandLights(lights, rand = seeded(7)) {
+export function expandLights(lights = [], rand = seeded(7)) {
   const out = []
   const maybe = rect => { const k = rand(); if (k >= .3) out.push({ ...rect, level: .45 + .55 * k }) }
   for (const { x, y, w, h, grid, flood } of lights) {

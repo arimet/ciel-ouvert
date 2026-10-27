@@ -50,3 +50,7 @@ test('long names split after the hyphen nearest the middle', () => {
     expect(lines.join('')).toBe(name.toUpperCase())
   }
 })
+
+test('a hyphenated name past 20 letters goes on two lines, as on real signs', () => {
+  expect(layoutSignText('Saint-Germain-sur-Morin').lines).toEqual(['SAINT-GERMAIN-', 'SUR-MORIN'])
+})

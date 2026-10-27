@@ -35,3 +35,8 @@ test('roughly a third of windows stay dark', async () => {
   const out = expandLights([{ x: 0, y: 0, w: 1, h: 1, grid: [10, 10] }], () => (i++ % 10) / 10)
   expect(out.length).toBe(70)
 })
+
+test('a scene without night lights (the plain) has none, rather than failing to load', async () => {
+  const { expandLights } = await import('../src/scene/lights.js')
+  expect(expandLights(undefined)).toEqual([])
+})

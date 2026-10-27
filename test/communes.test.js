@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { expect, test, vi } from 'vitest'
-import { resolveScene, searchCommunes } from '../src/places/communes.js'
+import { fetchCommune, resolveScene, searchCommunes } from '../src/places/communes.js'
 
 const saintDenis = JSON.parse(readFileSync(new URL('./fixtures/geo-saint-denis.json', import.meta.url)))
 const fakeFetch = body => async () => ({ ok: true, json: async () => body })
@@ -55,4 +55,14 @@ test('a region without its own scene still gets a regional scene with the sign',
 test('with no regional scene at all, any commune still gets a scene', () => {
   const r = resolveScene({ code: '54304', name: 'Laxou', region: '44' }, [{ id: 'nancy', kind: 'city', code: '54395' }])
   expect(r.entry.id).toBe('nancy')
+})
+
+test('a commune is found again from its code alone', async () => {
+  let url
+  const c = await fetchCommune('54395', async u => {
+    url = u
+    return { ok: true, json: async () => ({ nom: 'Nancy', code: '54395', codeDepartement: '54', codeRegion: '44', centre: { type: 'Point', coordinates: [6.1734, 48.6881] }, population: 103671 }) }
+  })
+  expect(url).toContain('/communes/54395?')
+  expect(c).toEqual({ code: '54395', name: 'Nancy', department: '54', region: '44', lat: 48.6881, lon: 6.1734, population: 103671 })
 })

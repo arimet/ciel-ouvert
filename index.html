@@ -7,13 +7,13 @@
 <meta name="description" content="Le vrai ciel du moment au-dessus de la place de votre commune, et de quoi le comprendre.">
 <link rel="stylesheet" href="/src/style.css">
 </head>
-<body>
+<body data-view="home">
 <main id="app">
   <div id="view" aria-hidden="true"></div>
   <div id="diagrams" aria-hidden="true"></div>
 
   <header class="top">
-    <h1>Ciel ouvert</h1>
+    <a class="brand" href="./" data-route="home">Ciel ouvert</a>
     <div class="search">
       <input id="q" type="search" placeholder="Votre commune" autocomplete="off" spellcheck="false"
         role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="suggestions" aria-label="Rechercher une commune">
@@ -21,17 +21,35 @@
     </div>
   </header>
 
-  <p id="caption" aria-live="polite"></p>
+  <section id="home" class="home" aria-labelledby="home-title">
+    <h1 id="home-title">Ciel ouvert</h1>
+    <p class="lede">Le vrai ciel du moment au-dessus de votre commune, et de quoi le comprendre.</p>
+    <div class="search big">
+      <input id="home-q" type="search" placeholder="Quel temps fait-il chez vous ?" autocomplete="off" spellcheck="false"
+        role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="home-suggestions" aria-label="Rechercher une commune">
+      <ul id="home-suggestions" role="listbox" aria-label="Communes" hidden></ul>
+    </div>
+    <p id="home-last" class="last"></p>
+    <aside class="invite" aria-labelledby="invite-title">
+      <h2 id="invite-title">Comprendre un phénomène</h2>
+      <p>Choisissez-en un : le ciel de la plaine change pour vous l’expliquer, étape par étape.</p>
+      <ul id="home-lessons" class="chips"></ul>
+    </aside>
+  </section>
 
-  <section id="panel" class="panel" hidden aria-label="Comprendre"></section>
-
-  <footer class="bottom">
-    <nav class="tabs" role="tablist">
-      <button type="button" role="tab" data-tab="meteo" aria-selected="true">Météo</button>
-      <button type="button" role="tab" data-tab="comprendre" aria-selected="false">Comprendre</button>
-    </nav>
-    <p id="credit"></p>
-  </footer>
+  <div class="dock">
+    <section id="panel" class="panel" hidden></section>
+    <p id="caption" aria-live="polite"></p>
+    <div id="hours" class="hours" role="group" aria-label="La journée heure par heure"></div>
+    <footer class="bottom">
+      <nav class="tabs" aria-label="Rubriques">
+        <a href="./" data-route="meteo">Météo</a>
+        <a href="?comprendre" data-route="comprendre">Comprendre</a>
+      </nav>
+      <button id="why" type="button" class="why" aria-expanded="false" aria-controls="panel">Pourquoi ce ciel ?</button>
+      <p id="credit"></p>
+    </footer>
+  </div>
 </main>
 <script type="module" src="/src/main.js"></script>
 </body>

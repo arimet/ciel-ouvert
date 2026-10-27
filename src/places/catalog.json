@@ -1,5 +1,21 @@
 [
   {
+    "id": "plaine",
+    "kind": "plain",
+    "name": "La plaine",
+    "lat": 48.3,
+    "lon": 1.6,
+    "azimuth": 20,
+    "pitch": 7,
+    "photo": "scenes/plaine/photo.webp",
+    "depth": "scenes/plaine/depth.png",
+    "credit": {
+      "author": "Chris Heaton",
+      "license": "CC BY-SA 2.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Two_Lonely_Trees_in_a_Ploughed_Field_near_Little_Bowsers_-_geograph.org.uk_-_7643204.jpg"
+    }
+  },
+  {
     "id": "nancy",
     "kind": "city",
     "code": "54395",

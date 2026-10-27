@@ -16,6 +16,7 @@ const fragmentShader = /* glsl */ `
   uniform vec3 tint, fogCol;
   uniform float aspect, time, fog, rain, snow, flash, night, fallback;
   uniform vec3 tornado; // x on screen, disparity, intensity
+  uniform float horizon; // screen height of the photo's lowest sky, where a far tornado touches the ground
   varying vec2 vUv; varying vec2 sUv;
   float h1(float x){ return fract(sin(x * 91.7) * 43758.5453); }
   float h(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7))) * 43758.5453); }
@@ -52,8 +53,13 @@ const fragmentShader = /* glsl */ `
       vec3 q = signH * vec3(vUv, 1.);
       vec2 su = q.xy / q.z;
       if (all(greaterThanEqual(su, vec2(0.))) && all(lessThanEqual(su, vec2(1.))) && disp <= signDisp + .02) {
-        vec4 sc = texture2D(signMap, su);
-        photo = mix(photo, sc.rgb * tint * (1. - night * .5), sc.a);
+        // A touch of blur and the photo's grain, and the light of the photo around it (overcast, rain, dusk).
+        vec4 sc = texture2D(signMap, su, .4);
+        vec3 amb = texture2D(map, vUv, 7.).rgb;
+        float lum = dot(amb, vec3(.299, .587, .114));
+        vec3 lit = sc.rgb * mix(vec3(1.), amb / max(lum, .02), .3) * clamp(lum * 1.75, .3, 1.02);
+        lit += (h(floor(vUv * 1600.)) - .5) * .035;
+        photo = mix(photo, lit * tint * (1. - night * .5), sc.a);
         disp = signDisp;
       }
     }
@@ -69,7 +75,7 @@ const fragmentShader = /* glsl */ `
     // Tornado: a rotating funnel from the cloud base to the ground, hidden by anything nearer than it.
     if (tornado.z > 0.) {
       float near = smoothstep(.05, .35, tornado.y);
-      float ground = mix(.42, .1, near);
+      float ground = mix(horizon, min(horizon, .1), near);
       float y = sUv.y - ground;
       float cx = tornado.x + sin(sUv.y * 7. + time * 1.3) * .012 * (1. + y * 3.);
       float halfW = (.005 + pow(max(y, 0.), 1.8) * .3) * (1. + near * 1.4) / aspect;
@@ -119,7 +125,7 @@ export function createPhotoLayer(renderer, overlayTexture) {
     transparent: true, depthTest: false, depthWrite: false,
     blending: THREE.CustomBlending, blendSrc: THREE.OneFactor, blendDst: THREE.OneMinusSrcAlphaFactor,
     uniforms: {
-      map: { value: null }, mask: { value: null }, depth: { value: null }, overlay: { value: overlayTexture }, lights: { value: null }, signMap: { value: null }, signH: { value: new THREE.Matrix3() }, hasSign: { value: 0 }, signDisp: { value: 0 }, tornado: { value: new THREE.Vector3() },
+      map: { value: null }, mask: { value: null }, depth: { value: null }, overlay: { value: overlayTexture }, lights: { value: null }, signMap: { value: null }, signH: { value: new THREE.Matrix3() }, hasSign: { value: 0 }, signDisp: { value: 0 }, tornado: { value: new THREE.Vector3() }, horizon: { value: .42 },
       scale: { value: new THREE.Vector2(1, 1) }, offset: { value: new THREE.Vector2(.5, .5) }, aspect: { value: 1.5 }, time: { value: 0 },
       tint: { value: new THREE.Vector3(1, 1, 1) }, fogCol: { value: new THREE.Vector3(.8, .82, .84) },
       fog: { value: 0 }, rain: { value: 0 }, snow: { value: 0 }, flash: { value: 0 }, night: { value: 0 },
@@ -141,6 +147,7 @@ export function createPhotoLayer(renderer, overlayTexture) {
     const { scale, offset } = cropWindow(viewAspect, photoAspect, focusX)
     u.scale.value.set(...scale)
     u.offset.value.set(...offset)
+    u.horizon.value = .5 - (skyBottom - .5) / scale[1]
   }
 
   return {

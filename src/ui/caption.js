@@ -14,10 +14,11 @@ export function localTime(now, utcOffset) {
   return `${d.getUTCHours()} h ${String(d.getUTCMinutes()).padStart(2, '0')}`
 }
 
-export function captionText({ name, weather, error, now = new Date() }) {
+export function captionText({ name, weather, error, now = new Date(), forecast = false }) {
   if (error) return `${name} · météo indisponible`
   if (!weather) return name
-  return [name, localTime(now, weather.utcOffset), `${Math.round(weather.temperature)} °C`, weatherLabel(weather.weatherCode)].filter(Boolean).join(' · ')
+  const time = localTime(now, weather.utcOffset)
+  return [name, forecast ? `prévision pour ${time}` : time, `${Math.round(weather.temperature)} °C`, weatherLabel(weather.weatherCode)].filter(Boolean).join(' · ')
 }
 
 export function showCaption(el, state) {

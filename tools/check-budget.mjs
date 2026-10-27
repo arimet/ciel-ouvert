@@ -10,7 +10,7 @@ const files = [
   'index.html',
   ...readdirSync(join(dist, 'assets')).map(f => join('assets', f)),
   ...readdirSync(join(dist, 'clouds')).map(f => join('clouds', f)),
-  'core/stbn.bin', 'scenes/nancy/photo.webp', 'scenes/nancy/mask.png', 'scenes/nancy/depth.png',
+  'core/stbn.bin', 'scenes/plaine/photo.webp', 'scenes/plaine/mask.png', 'scenes/plaine/depth.png',
 ]
 let total = 0
 for (const f of files) {

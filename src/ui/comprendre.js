@@ -1,10 +1,11 @@
-// "Comprendre" panel: the sky of the moment, then the guided lessons.
+// Panels: "Pourquoi ce ciel ?" next to the weather, the lesson list over the plain.
 // Texts and lessons appear only once reviewed (drafts are flagged in dev).
-export function renderComprendre(el, { families, texts, lessons, onLesson }) {
-  el.replaceChildren(
-    section('Le ciel du moment', skyOfTheMoment(families, texts)),
-    section('Leçons', lessonList(lessons, onLesson)),
-  )
+export function renderSkyOfTheMoment(el, { families, texts }) {
+  el.replaceChildren(section('Le ciel du moment', skyOfTheMoment(families, texts)))
+}
+
+export function renderLessons(el, { lessons, onLesson }) {
+  el.replaceChildren(section('Comprendre un phénomène', lessonList(lessons, onLesson)))
 }
 
 function build(tag, props, children) {

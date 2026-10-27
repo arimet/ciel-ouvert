@@ -23,11 +23,11 @@ export function homography(src, dst) {
 
 const MAX = 16
 
-// Sign text: up to 16 characters at full size, then smaller, then on two lines.
+// Sign text: up to 16 characters at full size, then smaller, then on two lines (past 20 if there is a hyphen to cut at).
 export function layoutSignText(name, maxChars = MAX) {
   const text = name.toUpperCase()
   if (text.length <= maxChars) return { lines: [text], scale: 1 }
-  if (text.length <= maxChars * 2) return { lines: [text], scale: maxChars / text.length }
+  if (text.length <= maxChars * 2 && (text.length <= 20 || !text.includes('-'))) return { lines: [text], scale: maxChars / text.length }
   // Cut after the hyphen nearest the middle (the hyphen stays on line 1); the middle if there is none.
   const mid = text.length / 2
   let cut = -1
@@ -37,21 +37,44 @@ export function layoutSignText(name, maxChars = MAX) {
   return { lines, scale: Math.max(.5, maxChars / Math.max(...lines.map(l => l.length))) }
 }
 
-// French town entry sign on its post: white panel, red border, black capitals, 3:1.
-// The canvas is 600×420: panel on top, post below, transparent around, so the catalog corners span panel and post.
-
+// French town entry sign (EB10): white field, red border inside a thin white rim, rounded corners, black capitals,
+// on two galvanised posts. The canvas is 600×420: panel on top, posts below, transparent around, so the catalog
+// corners span panel and posts. Light and grain come from the photo, in the shader.
 export function drawSign(name) {
   const canvas = document.createElement('canvas')
   canvas.width = 600; canvas.height = 420
   const g = canvas.getContext('2d')
-  g.fillStyle = '#7d8084'; g.fillRect(288, 190, 24, 230)
-  g.fillStyle = '#c8102e'; g.fillRect(0, 0, 600, 200)
-  g.fillStyle = '#fff'; g.fillRect(12, 12, 576, 176)
+  const round = (x, y, w, h, r) => { g.beginPath(); g.roundRect(x, y, w, h, r) }
+
+  // Posts: round tubes, lit from the sky, darker toward the ground.
+  for (const x of [150, 436]) {
+    const tube = g.createLinearGradient(x, 0, x + 14, 0)
+    tube.addColorStop(0, '#5d6165'); tube.addColorStop(.35, '#b9bdc0'); tube.addColorStop(1, '#4a4d50')
+    g.fillStyle = tube; g.fillRect(x, 180, 14, 240)
+    const ground = g.createLinearGradient(0, 330, 0, 420)
+    ground.addColorStop(0, 'rgba(0,0,0,0)'); ground.addColorStop(1, 'rgba(0,0,0,.35)')
+    g.fillStyle = ground; g.fillRect(x, 330, 14, 90)
+  }
+
+  // Panel: rim, border, field. The field is lit from above (overcast) and a little grimy at the bottom.
+  g.fillStyle = '#ecebe6'; round(0, 0, 600, 200, 14); g.fill()
+  g.fillStyle = '#b81a2c'; round(5, 5, 590, 190, 11); g.fill()
+  const field = g.createLinearGradient(0, 20, 0, 180)
+  field.addColorStop(0, '#f4f3ee'); field.addColorStop(.7, '#e9e8e2'); field.addColorStop(1, '#d9d7cf')
+  g.fillStyle = field; round(19, 19, 562, 162, 6); g.fill()
+  // Fine dust so the field is not a flat colour.
+  for (let i = 0; i < 900; i++) {
+    const x = 19 + Math.random() * 562, y = 19 + Math.random() * 162
+    g.fillStyle = `rgba(60,55,45,${.03 + Math.random() * .05 * (y / 180)})`
+    g.fillRect(x, y, 1 + Math.random() * 2, 1 + Math.random() * 2)
+  }
+
+  // Capitals about 45 % of the field height, narrowed rather than shrunk when the name is long.
   const { lines, scale } = layoutSignText(name)
-  const size = 64 * scale
-  g.fillStyle = '#111'
-  g.font = `700 ${size}px "Arial Narrow", "Helvetica Neue", Arial, sans-serif`
+  const size = lines.length > 1 ? 66 : 96 * Math.max(scale, .62)
+  g.fillStyle = '#16171a'
+  g.font = `700 ${size}px "Arial Narrow", "Roboto Condensed", "Helvetica Neue", Arial, sans-serif`
   g.textAlign = 'center'; g.textBaseline = 'middle'
-  lines.forEach((l, i) => g.fillText(l, 300, 100 + (i - (lines.length - 1) / 2) * size * 1.1, 560))
+  lines.forEach((l, i) => g.fillText(l, 300, 104 + (i - (lines.length - 1) / 2) * size * 1.02, 520))
   return canvas
 }
