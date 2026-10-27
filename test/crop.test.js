@@ -44,3 +44,17 @@ test('sky reaching low in the photo raises the camera so the 3D horizon stays ou
     expect(Math.min(1, horizonOnScreen(pitch))).toBeGreaterThan(Math.min(1, skyOnScreen))
   }
 })
+
+test('a view wider than the photo keeps a low point (a sign foot) in view, cropping the top instead', () => {
+  const { scale, offset } = cropWindow(16 / 9, 4 / 3, .5, .95)
+  const visibleBottom = 1 - (offset[1] - scale[1] / 2) // photo y, top-left origin
+  expect(visibleBottom).toBeGreaterThanOrEqual(.95)
+  expect(offset[1] - scale[1] / 2).toBeGreaterThanOrEqual(0)
+  expect(cropWindow(16 / 9, 4 / 3).offset[1]).toBe(.5)
+})
+
+test('the horizon follows a crop that is not centred', () => {
+  // Window showing photo y .25 to 1: its centre is at .625.
+  const centred = horizonPitch(.83, .75, 7), shifted = horizonPitch(.83, .75, 7, 50, .625)
+  expect(shifted).toBeLessThan(centred)
+})

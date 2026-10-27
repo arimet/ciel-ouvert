@@ -192,7 +192,7 @@ async function showScene(entry, commune, signText) {
     state.view = entry.kind === 'region' ? { ...entry, lat: commune.lat, lon: commune.lon } : entry
     placeSky()
     // On wide screens the caption and the day move to the side away from the town sign.
-    document.body.dataset.sign = entry.sign && signText ? (entry.sign.corners[0][0] < .5 ? 'left' : 'right') : ''
+    document.body.dataset.sign = entry.sign && signText ? (entry.sign.foot[0] < .5 ? 'left' : 'right') : ''
     $('credit').innerHTML = creditHtml(entry.credit)
   }
   return token === state.token

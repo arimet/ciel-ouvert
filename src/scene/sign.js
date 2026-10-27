@@ -37,44 +37,101 @@ export function layoutSignText(name, maxChars = MAX) {
   return { lines, scale: Math.max(.5, maxChars / Math.max(...lines.map(l => l.length))) }
 }
 
-// French town entry sign (EB10): white field, red border inside a thin white rim, rounded corners, black capitals,
-// on two galvanised posts. The canvas is 600×420: panel on top, posts below, transparent around, so the catalog
-// corners span panel and posts. Light and grain come from the photo, in the shader.
-export function drawSign(name) {
+// Real-world size of the sign in metres: an EB10 panel as wide as the name needs, on posts 1 m high.
+export function signSize(lines) {
+  const chars = Math.max(...lines.map(l => l.length))
+  const panel = [Math.min(2, Math.max(.9, .3 + .075 * chars)), lines.length > 1 ? .68 : .45]
+  const post = 1
+  return { panel, post, width: panel[0], height: post + panel[1] }
+}
+
+// Where the sign's corners land in the photo (UV, origin top-left: TL, TR, BR, BL). It stands on `foot`, on the ground;
+// `horizon` is the eye level of the photo, taken as 1.6 m above the ground, which gives the scale at that spot.
+// yaw (degrees) turns it toward the road: its right edge comes closer. f is the focal length in photo heights.
+export function signCorners({ foot: [fx, fy], horizon }, { width, height }, aspect, yaw = 15, f = 1.2, eye = 1.6) {
+  const metre = (fy - horizon) / eye
+  const z0 = f / metre, x0 = (fx - .5) * aspect * z0 / f
+  const c = Math.cos(yaw * Math.PI / 180), s = Math.sin(yaw * Math.PI / 180)
+  const project = (along, up) => {
+    const x = x0 + along * c, z = z0 - along * s
+    return [(.5 * aspect + f * x / z) / aspect, horizon + f * (eye - up) / z]
+  }
+  return [project(-width / 2, height), project(width / 2, height), project(width / 2, 0), project(-width / 2, 0)]
+}
+
+const FONT = '"Barlow Semi Condensed", "Arial Narrow", sans-serif'
+const PX = 400 // canvas pixels per metre
+
+// French town entry sign (EB10) as it stands in the street: aluminium edge, white rim, red border, retroreflective
+// white field with black capitals, two galvanised posts, a little road grime. Light and grain come from the photo.
+export async function drawSign(name) {
+  const { lines } = layoutSignText(name)
+  const size = signSize(lines)
+  const em = (lines.length > 1 ? .15 : .17) * PX
+  await document.fonts?.load(`600 ${em}px ${FONT}`, lines.join('')).catch(() => {})
   const canvas = document.createElement('canvas')
-  canvas.width = 600; canvas.height = 420
+  canvas.width = Math.round(size.width * PX); canvas.height = Math.round(size.height * PX)
   const g = canvas.getContext('2d')
+  const [pw, ph] = size.panel.map(v => Math.round(v * PX))
+  const rand = seeded(name.length * 97 + name.charCodeAt(0))
   const round = (x, y, w, h, r) => { g.beginPath(); g.roundRect(x, y, w, h, r) }
 
-  // Posts: round tubes, lit from the sky, darker toward the ground.
-  for (const x of [150, 436]) {
-    const tube = g.createLinearGradient(x, 0, x + 14, 0)
-    tube.addColorStop(0, '#5d6165'); tube.addColorStop(.35, '#b9bdc0'); tube.addColorStop(1, '#4a4d50')
-    g.fillStyle = tube; g.fillRect(x, 180, 14, 240)
-    const ground = g.createLinearGradient(0, 330, 0, 420)
-    ground.addColorStop(0, 'rgba(0,0,0,0)'); ground.addColorStop(1, 'rgba(0,0,0,.35)')
-    g.fillStyle = ground; g.fillRect(x, 330, 14, 90)
+  // Posts: zinc tubes lit from the sky, mottled, dirtier near the ground.
+  const tube = .06 * PX
+  for (const cx of [-1, 1].map(k => pw / 2 + k * Math.min(pw / 2 - .18 * PX, pw * .32))) {
+    const x = cx - tube / 2
+    const shade = g.createLinearGradient(x, 0, x + tube, 0)
+    shade.addColorStop(0, '#5f6366'); shade.addColorStop(.3, '#c6c9ca'); shade.addColorStop(.55, '#9a9ea1'); shade.addColorStop(1, '#4e5255')
+    g.fillStyle = shade; g.fillRect(x, ph * .2, tube, canvas.height - ph * .2)
+    for (let i = 0; i < 160; i++) {
+      g.fillStyle = rand() < .5 ? 'rgba(255,255,255,.07)' : 'rgba(0,0,0,.07)'
+      g.fillRect(x + rand() * tube, ph + rand() * (canvas.height - ph), 2 + rand() * 4, 2 + rand() * 6)
+    }
+    const dirt = g.createLinearGradient(0, canvas.height - .25 * PX, 0, canvas.height)
+    dirt.addColorStop(0, 'rgba(45,38,28,0)'); dirt.addColorStop(1, 'rgba(45,38,28,.55)')
+    g.fillStyle = dirt; g.fillRect(x, canvas.height - .25 * PX, tube, .25 * PX)
   }
 
-  // Panel: rim, border, field. The field is lit from above (overcast) and a little grimy at the bottom.
-  g.fillStyle = '#ecebe6'; round(0, 0, 600, 200, 14); g.fill()
-  g.fillStyle = '#b81a2c'; round(5, 5, 590, 190, 11); g.fill()
-  const field = g.createLinearGradient(0, 20, 0, 180)
-  field.addColorStop(0, '#f4f3ee'); field.addColorStop(.7, '#e9e8e2'); field.addColorStop(1, '#d9d7cf')
-  g.fillStyle = field; round(19, 19, 562, 162, 6); g.fill()
-  // Fine dust so the field is not a flat colour.
-  for (let i = 0; i < 900; i++) {
-    const x = 19 + Math.random() * 562, y = 19 + Math.random() * 162
-    g.fillStyle = `rgba(60,55,45,${.03 + Math.random() * .05 * (y / 180)})`
-    g.fillRect(x, y, 1 + Math.random() * 2, 1 + Math.random() * 2)
-  }
+  // Panel: edge, rim, border, field.
+  const r = ph * .04, b0 = ph * .028, b1 = b0 + ph * .07
+  round(0, 0, pw, ph, r); g.fillStyle = '#8e9194'; g.fill()
+  round(2, 2, pw - 4, ph - 4, r - 1); g.fillStyle = '#ecece7'; g.fill()
+  const red = g.createLinearGradient(0, 0, 0, ph)
+  red.addColorStop(0, '#c0242d'); red.addColorStop(1, '#a51f28')
+  round(b0, b0, pw - 2 * b0, ph - 2 * b0, r * .8); g.fillStyle = red; g.fill()
+  const field = g.createLinearGradient(0, b1, 0, ph - b1)
+  field.addColorStop(0, '#f3f3ef'); field.addColorStop(.6, '#e9e9e4'); field.addColorStop(1, '#dcdbd4')
+  round(b1, b1, pw - 2 * b1, ph - 2 * b1, r * .45); g.fillStyle = field; g.fill()
 
-  // Capitals about 45 % of the field height, narrowed rather than shrunk when the name is long.
-  const { lines, scale } = layoutSignText(name)
-  const size = lines.length > 1 ? 66 : 96 * Math.max(scale, .62)
-  g.fillStyle = '#16171a'
-  g.font = `700 ${size}px "Arial Narrow", "Roboto Condensed", "Helvetica Neue", Arial, sans-serif`
+  // Capitals.
+  g.fillStyle = '#151515'
+  g.font = `600 ${em}px ${FONT}`
   g.textAlign = 'center'; g.textBaseline = 'middle'
-  lines.forEach((l, i) => g.fillText(l, 300, 104 + (i - (lines.length - 1) / 2) * size * 1.02, 520))
-  return canvas
+  if ('letterSpacing' in g) g.letterSpacing = `${em * .02}px`
+  lines.forEach((l, i) => g.fillText(l, pw / 2, ph / 2 + em * .04 + (i - (lines.length - 1) / 2) * em * 1.02, pw - 2 * b1 - .08 * PX))
+
+  // Wear over the whole face: a soft sheen from the sky, grime settling at the bottom, streaks and specks.
+  g.save()
+  round(0, 0, pw, ph, r); g.clip()
+  const sheen = g.createLinearGradient(0, 0, pw * .6, ph)
+  sheen.addColorStop(0, 'rgba(255,255,255,.10)'); sheen.addColorStop(.5, 'rgba(255,255,255,0)')
+  g.fillStyle = sheen; g.fillRect(0, 0, pw, ph)
+  const grime = g.createLinearGradient(0, ph * .55, 0, ph)
+  grime.addColorStop(0, 'rgba(80,70,50,0)'); grime.addColorStop(1, 'rgba(80,70,50,.16)')
+  g.fillStyle = grime; g.fillRect(0, 0, pw, ph)
+  for (let i = 0; i < 14; i++) {
+    g.fillStyle = `rgba(90,80,60,${.03 + rand() * .04})`
+    g.fillRect(rand() * pw, rand() * ph * .3, 1 + rand() * 3, ph * (.2 + rand() * .6))
+  }
+  for (let i = 0; i < 700; i++) {
+    g.fillStyle = `rgba(60,55,45,${.02 + rand() * .06})`
+    g.fillRect(rand() * pw, rand() * ph, 1 + rand() * 2, 1 + rand() * 2)
+  }
+  g.restore()
+  return { canvas, size }
+}
+
+function seeded(seed) {
+  let s = seed >>> 0
+  return () => (s = (s * 1664525 + 1013904223) >>> 0) / 2 ** 32
 }

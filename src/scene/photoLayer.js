@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { lightsToMask } from './lights.js'
-import { drawSign, homography } from './sign.js'
+import { drawSign, homography, signCorners } from './sign.js'
 import { cropWindow, horizonPitch, lowestSky } from './crop.js'
 import { createLatest } from './latest.js'
 
@@ -140,14 +140,14 @@ export function createPhotoLayer(renderer, overlayTexture) {
   const camera = new THREE.Camera()
   const loader = new THREE.TextureLoader()
   const u = material.uniforms
-  let photoAspect = 1.5, viewAspect = 1, focusX = .5, tornado = null, skyBottom = 0
+  let photoAspect = 1.5, viewAspect = 1, focusX = .5, focusY = .5, tornado = null, skyBottom = 0
   const latest = createLatest()
 
   const fit = () => {
-    const { scale, offset } = cropWindow(viewAspect, photoAspect, focusX)
+    const { scale, offset } = cropWindow(viewAspect, photoAspect, focusX, focusY)
     u.scale.value.set(...scale)
     u.offset.value.set(...offset)
-    u.horizon.value = .5 - (skyBottom - .5) / scale[1]
+    u.horizon.value = .5 - (skyBottom - (1 - offset[1])) / scale[1]
   }
 
   return {
@@ -159,27 +159,31 @@ export function createPhotoLayer(renderer, overlayTexture) {
       const base = import.meta.env.BASE_URL
       // The sky mask sits next to the photo (prepare-scene writes both).
       const maskUrl = base + entry.photo.replace(/photo\.webp$/, 'mask.png')
-      const [map, mask, depth] = await Promise.all([loader.loadAsync(base + entry.photo), loader.loadAsync(maskUrl), loader.loadAsync(base + entry.depth)])
+      const withSign = Boolean(entry.sign && signText)
+      const [map, mask, depth, sign] = await Promise.all([loader.loadAsync(base + entry.photo), loader.loadAsync(maskUrl), loader.loadAsync(base + entry.depth),
+        withSign ? drawSign(signText) : null])
       if (!latest.isCurrent(token)) {
         map.dispose(); mask.dispose(); depth.dispose()
         return false
       }
-      u.map.value?.dispose(); u.mask.value?.dispose(); u.depth.value?.dispose(); u.lights.value?.dispose()
+      u.map.value?.dispose(); u.mask.value?.dispose(); u.depth.value?.dispose(); u.lights.value?.dispose(); u.signMap.value?.dispose()
       u.map.value = map
       u.mask.value = mask
       skyBottom = lowestSky(pixels(mask.image))
       u.depth.value = depth
       u.lights.value = lightsToMask(entry.lights)
       // Regional squares keep their sign in view on narrow screens.
-      focusX = entry.sign && signText ? (entry.sign.corners[0][0] + entry.sign.corners[1][0]) / 2 : entry.focusX ?? .5
-      u.signMap.value?.dispose()
-      u.hasSign.value = entry.sign && signText ? 1 : 0
-      if (u.hasSign.value) {
-        u.signMap.value = new THREE.CanvasTexture(drawSign(signText))
-        // Catalog corners are photo UV with origin top-left (TL, TR, BR, BL); the shader's UV starts bottom-left.
-        const photoPts = entry.sign.corners.map(([x, y]) => [x, 1 - y])
-        u.signH.value.set(...homography(photoPts, [[0, 1], [1, 1], [1, 0], [0, 0]]))
-        u.signDisp.value = entry.sign.disparity
+      ;[focusX, focusY] = withSign ? entry.sign.foot : [entry.focusX ?? .5, .5]
+      u.hasSign.value = withSign ? 1 : 0
+      if (withSign) {
+        u.signMap.value = new THREE.CanvasTexture(sign.canvas)
+        u.signMap.value.anisotropy = renderer.capabilities.getMaxAnisotropy()
+        // Corners are photo UV with origin top-left (TL, TR, BR, BL); the shader's UV starts bottom-left.
+        const corners = signCorners(entry.sign, sign.size, map.image.width / map.image.height, entry.sign.yaw)
+        u.signH.value.set(...homography(corners.map(([x, y]) => [x, 1 - y]), [[0, 1], [1, 1], [1, 0], [0, 0]]))
+        // The whole sign stands at the depth of the ground under its foot.
+        const d = pixels(depth.image), [fx, fy] = entry.sign.foot
+        u.signDisp.value = d.data[(Math.min(d.height - 1, Math.round(fy * d.height)) * d.width + Math.round(fx * d.width)) * 4] / 255
       }
       photoAspect = map.image.width / map.image.height
       u.aspect.value = photoAspect
@@ -201,7 +205,7 @@ export function createPhotoLayer(renderer, overlayTexture) {
     },
     resize(w, h) { viewAspect = w / h; fit() },
     // Camera pitch that keeps the 3D sky's horizon below this photo's sky, for the current crop.
-    pitchFor(minPitch) { return horizonPitch(skyBottom, u.scale.value.y, minPitch) },
+    pitchFor(minPitch) { return horizonPitch(skyBottom, u.scale.value.y, minPitch, 50, 1 - u.offset.value.y) },
     render(t) {
       u.time.value = t
       if (tornado) {
