@@ -23,12 +23,13 @@ const view = $('view')
 const BASE = import.meta.env.BASE_URL
 const NANCY = { code: '54395', name: 'Nancy', department: '54', region: '44', lat: 48.6937, lon: 6.1834, population: 104000 }
 
-// Review URL: ?scene=<id>&anchor=<key>&hour=<UTC hour on 26 Oct 2026>&snow=<0..1>&sign=<name>&tornado=<disparity>
+// Review URL: ?scene=<id>&anchor=<key>&hour=<UTC hour on 26 Oct 2026>&snow=<0..1>&sign=<name>&tornado=<disparity>&quality=<level>
 const params = new URLSearchParams(location.search)
 const ANCHOR_HOURS = { clear: 13.5, cloudy: 12, rain: 11, storm: 15, fog: 8.6, sunset: 16.15, night: 21 }
 const forcedAnchor = params.get('anchor')
 const forcedHour = params.has('hour') || forcedAnchor ? Number(params.get('hour') ?? ANCHOR_HOURS[forcedAnchor]) : null
 const forcedEntry = catalog.find(e => e.id === params.get('scene'))
+const forcedQuality = params.get('quality')
 
 const storage = {
   get() { try { return JSON.parse(localStorage.getItem('commune')) } catch { return null } },
@@ -129,8 +130,6 @@ async function show(commune, entryOverride) {
   const token = ++state.token
   const { entry, signText } = entryOverride ? { entry: entryOverride, signText: params.get('sign') } : resolveScene(commune, catalog)
   Object.assign(state, { commune, weather: null, error: false, families: null })
-  // Regional squares stand in for the commune: the sky (sun, time) is the commune's own.
-  sky.setView(entry.kind === 'city' ? entry : { ...entry, lat: commune.lat, lon: commune.lon })
   applySky()
   try {
     if (!await photo.load(entry, signText)) return
@@ -140,8 +139,16 @@ async function show(commune, entryOverride) {
     return
   }
   if (token !== state.token) return
+  // Regional squares stand in for the commune: the sky (sun, time) is the commune's own.
+  state.view = entry.kind === 'city' ? entry : { ...entry, lat: commune.lat, lon: commune.lon }
+  placeSky()
   $('credit').innerHTML = creditHtml(entry.credit)
   refreshWeather()
+}
+
+// The camera looks up further when the photo's sky reaches below the catalog pitch's horizon.
+function placeSky() {
+  if (state.view) sky.setView({ ...state.view, pitch: photo.pitchFor(state.view.pitch) })
 }
 
 function resize() {
@@ -150,6 +157,7 @@ function resize() {
   sky.resize(w, h)
   photo.resize(w, h)
   overlay.resize(w, h)
+  placeSky()
 }
 addEventListener('resize', resize)
 resize()
@@ -169,9 +177,10 @@ const first = forcedEntry
   : show(storage.get() ?? NANCY)
 if (params.has('tornado')) first.then(() => photo.setTornado({ x: .55, disparity: Number(params.get('tornado')), intensity: 1 }))
 // A sky that fails to load degrades to the photo alone; the loop always starts.
+if (forcedQuality) sky.setQuality(forcedQuality)
 Promise.all([sky.ready.catch(() => { photo.fallback = true }), first.catch(() => {})]).then(() => renderer.setAnimationLoop(() => {
   const raw = clock.getDelta(), dt = Math.min(raw, .05), t = clock.elapsedTime
-  const level = quality.frame(raw, document.hidden)
+  const level = forcedQuality ? null : quality.frame(raw, document.hidden)
   if (level === 'photo-only') photo.fallback = true
   else if (level) sky.setQuality(level)
   player.tick(dt)

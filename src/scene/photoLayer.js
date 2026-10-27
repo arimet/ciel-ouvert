@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { lightsToMask } from './lights.js'
 import { drawSign, homography } from './sign.js'
-import { cropWindow } from './crop.js'
+import { cropWindow, horizonPitch, lowestSky } from './crop.js'
 import { createLatest } from './latest.js'
 
 const vertexShader = /* glsl */ `
@@ -107,6 +107,13 @@ const fragmentShader = /* glsl */ `
     gl_FragColor = vec4(col, a);
   }`
 
+const pixels = img => {
+  const c = Object.assign(document.createElement('canvas'), { width: img.width, height: img.height })
+  const g = c.getContext('2d')
+  g.drawImage(img, 0, 0)
+  return g.getImageData(0, 0, c.width, c.height)
+}
+
 export function createPhotoLayer(renderer, overlayTexture) {
   const material = new THREE.ShaderMaterial({
     transparent: true, depthTest: false, depthWrite: false,
@@ -127,7 +134,7 @@ export function createPhotoLayer(renderer, overlayTexture) {
   const camera = new THREE.Camera()
   const loader = new THREE.TextureLoader()
   const u = material.uniforms
-  let photoAspect = 1.5, viewAspect = 1, focusX = .5, tornado = null
+  let photoAspect = 1.5, viewAspect = 1, focusX = .5, tornado = null, skyBottom = 0
   const latest = createLatest()
 
   const fit = () => {
@@ -153,6 +160,7 @@ export function createPhotoLayer(renderer, overlayTexture) {
       u.map.value?.dispose(); u.mask.value?.dispose(); u.depth.value?.dispose(); u.lights.value?.dispose()
       u.map.value = map
       u.mask.value = mask
+      skyBottom = lowestSky(pixels(mask.image))
       u.depth.value = depth
       u.lights.value = lightsToMask(entry.lights)
       // Regional squares keep their sign in view on narrow screens.
@@ -185,6 +193,8 @@ export function createPhotoLayer(renderer, overlayTexture) {
       if (!t) u.tornado.value.set(0, 0, 0)
     },
     resize(w, h) { viewAspect = w / h; fit() },
+    // Camera pitch that keeps the 3D sky's horizon below this photo's sky, for the current crop.
+    pitchFor(minPitch) { return horizonPitch(skyBottom, u.scale.value.y, minPitch) },
     render(t) {
       u.time.value = t
       if (tornado) {

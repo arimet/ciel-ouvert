@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { cropWindow } from '../src/scene/crop.js'
+import { cropWindow, horizonPitch, lowestSky } from '../src/scene/crop.js'
 
 test('a wide photo in a portrait view keeps the focus point visible', () => {
   const { scale, offset } = cropWindow(.5, 1.5, .1)
@@ -16,4 +16,31 @@ test('a view wider than the photo crops vertically, centred', () => {
   const { scale, offset } = cropWindow(3, 1.5, .1)
   expect(scale).toEqual([1, .5])
   expect(offset).toEqual([.5, .5])
+})
+
+const maskOf = (W, H, isSky) => {
+  const data = new Uint8ClampedArray(W * H * 4).fill(255)
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (isSky(x, y)) data[(y * W + x) * 4] = 0
+  return { data, width: W, height: H }
+}
+
+test('the lowest sky counts a gap in a monument but not a stray pixel', () => {
+  const arch = maskOf(400, 100, (x, y) => y < 30 || (y < 70 && x >= 200 && x < 210))
+  expect(lowestSky(arch)).toBeCloseTo(.7)
+  const stray = maskOf(400, 100, (x, y) => y < 30 || (y === 80 && x === 5))
+  expect(lowestSky(stray)).toBeCloseTo(.3)
+})
+
+const horizonOnScreen = pitch => .5 + Math.tan(pitch * Math.PI / 180) / (2 * Math.tan(25 * Math.PI / 180))
+
+test('sky high in the photo keeps the chosen pitch', () => {
+  expect(horizonPitch(.4, 1, 7)).toBe(7)
+})
+
+test('sky reaching low in the photo raises the camera so the 3D horizon stays out of sight', () => {
+  for (const scaleY of [1, .96, .7]) {
+    const skyOnScreen = (.83 - .5) / scaleY + .5
+    const pitch = horizonPitch(.83, scaleY, 7)
+    expect(Math.min(1, horizonOnScreen(pitch))).toBeGreaterThan(Math.min(1, skyOnScreen))
+  }
 })
