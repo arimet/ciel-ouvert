@@ -62,9 +62,9 @@
     "kind": "city",
     "code": "75056",
     "name": "Paris",
-    "lat": 48.8538,
-    "lon": 2.3015,
-    "azimuth": 314,
+    "lat": 48.8555,
+    "lon": 2.303,
+    "azimuth": 310,
     "pitch": 14,
     "photo": "scenes/paris/photo.webp",
     "depth": "scenes/paris/depth.png",
@@ -87,22 +87,25 @@
     "kind": "city",
     "code": "13055",
     "name": "Marseille",
-    "lat": 43.2958,
-    "lon": 5.3715,
-    "azimuth": 180,
+    "lat": 43.2952,
+    "lon": 5.3745,
+    "azimuth": 265,
     "pitch": 8,
     "photo": "scenes/marseille/photo.webp",
     "depth": "scenes/marseille/depth.png",
     "credit": {
-      "author": "Tiia Monto",
-      "license": "CC BY-SA 3.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Marseille_-_Vieux-Port2.jpg"
+      "author": "K.Weise",
+      "license": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:VieuxPortdaQuaidesBelge.jpg"
     },
     "lights": [
-      { "x": 0.5, "y": 0.13, "w": 0.07, "h": 0.14, "flood": true },
-      { "x": 0.0, "y": 0.33, "w": 0.27, "h": 0.37, "grid": [9, 7] },
-      { "x": 0.27, "y": 0.38, "w": 0.35, "h": 0.22, "grid": [12, 4] },
-      { "x": 0.62, "y": 0.33, "w": 0.38, "h": 0.22, "grid": [12, 4] }
+      { "x": 0, "y": 0.38, "w": 0.04, "h": 0.08, "grid": [2, 4] },
+      { "x": 0.04, "y": 0.44, "w": 0.38, "h": 0.05, "grid": [30, 2] },
+      { "x": 0.45, "y": 0.45, "w": 0.02, "h": 0.03, "grid": [2, 2] },
+      { "x": 0.63, "y": 0.48, "w": 0.05, "h": 0.02, "grid": [4, 1] },
+      { "x": 0.83, "y": 0.44, "w": 0.17, "h": 0.06, "grid": [18, 3] },
+      { "x": 0.44, "y": 0.49, "w": 0.12, "h": 0.015, "grid": [8, 1] },
+      { "x": 0, "y": 0.48, "w": 0.11, "h": 0.02, "grid": [8, 1] }
     ]
   },
   {
@@ -110,22 +113,26 @@
     "kind": "city",
     "code": "69123",
     "name": "Lyon",
-    "lat": 45.7575,
-    "lon": 4.8321,
-    "azimuth": 315,
+    "lat": 45.7578,
+    "lon": 4.8325,
+    "azimuth": 285,
     "pitch": 8,
     "photo": "scenes/lyon/photo.webp",
     "depth": "scenes/lyon/depth.png",
     "credit": {
-      "author": "Patrick Nouhailler",
-      "license": "CC BY-SA 3.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Lyon_-_panoramio_(132).jpg"
+      "author": "randreu",
+      "license": "CC BY 3.0",
+      "url": "https://commons.wikimedia.org/wiki/File:France_-_Lyon_-_panoramio_(2).jpg"
     },
     "lights": [
-      { "x": 0.09, "y": 0.3, "w": 0.14, "h": 0.15, "flood": true },
-      { "x": 0.42, "y": 0.35, "w": 0.02, "h": 0.17, "flood": true },
-      { "x": 0.34, "y": 0.6, "w": 0.36, "h": 0.24, "grid": [14, 4] },
-      { "x": 0.7, "y": 0.58, "w": 0.3, "h": 0.27, "grid": [9, 4] }
+      { "x": 0.52, "y": 0.3, "w": 0.11, "h": 0.2, "flood": true },
+      { "x": 0.83, "y": 0.33, "w": 0.01, "h": 0.012 },
+      { "x": 0, "y": 0.48, "w": 0.35, "h": 0.08, "grid": [12, 2] },
+      { "x": 0.28, "y": 0.44, "w": 0.1, "h": 0.06, "grid": [4, 2] },
+      { "x": 0.05, "y": 0.68, "w": 0.53, "h": 0.2, "grid": [22, 4] },
+      { "x": 0.25, "y": 0.89, "w": 0.33, "h": 0.04, "grid": [10, 1] },
+      { "x": 0.63, "y": 0.68, "w": 0.18, "h": 0.2, "grid": [8, 5] },
+      { "x": 0.82, "y": 0.58, "w": 0.17, "h": 0.3, "grid": [7, 7] }
     ]
   },
   {
@@ -133,19 +140,25 @@
     "kind": "city",
     "code": "31555",
     "name": "Toulouse",
-    "lat": 43.6042,
+    "lat": 43.604,
     "lon": 1.4425,
-    "azimuth": 75,
+    "azimuth": 70,
     "pitch": 6,
     "photo": "scenes/toulouse/photo.webp",
     "depth": "scenes/toulouse/depth.png",
     "credit": {
-      "author": "Frédéric Neupont",
-      "license": "CC0",
-      "url": "https://commons.wikimedia.org/wiki/File:Capitole-27.jpg"
+      "author": "Calips",
+      "license": "CC BY-SA 3.0",
+      "url": "https://commons.wikimedia.org/wiki/File:France_Occitanie_31_Toulouse_16.jpg"
     },
     "lights": [
-      { "x": 0.04, "y": 0.37, "w": 0.92, "h": 0.27, "flood": true }
+      { "x": 0.4, "y": 0.42, "w": 0.3, "h": 0.07, "grid": [14, 1] },
+      { "x": 0.7, "y": 0.38, "w": 0.27, "h": 0.1, "grid": [8, 1] },
+      { "x": 0.4, "y": 0.535, "w": 0.57, "h": 0.06, "grid": [20, 1] },
+      { "x": 0, "y": 0.39, "w": 0.26, "h": 0.12, "grid": [10, 3] },
+      { "x": 0.32, "y": 0.42, "w": 0.06, "h": 0.13, "grid": [3, 4] },
+      { "x": 0.68, "y": 0.25, "w": 0.14, "h": 0.08, "flood": true },
+      { "x": 0.105, "y": 0.45, "w": 0.012, "h": 0.02 }
     ]
   },
   {
@@ -153,24 +166,36 @@
     "kind": "city",
     "code": "06088",
     "name": "Nice",
-    "lat": 43.6973,
-    "lon": 7.2701,
-    "azimuth": 325,
+    "lat": 43.6965,
+    "lon": 7.2705,
+    "azimuth": 350,
     "pitch": 7,
     "photo": "scenes/nice/photo.webp",
     "depth": "scenes/nice/depth.png",
     "credit": {
-      "author": "Ermell",
-      "license": "CC BY-SA 4.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Nizza-Place_Masséna_of_Nice-4070873.jpg"
+      "author": "Jorge Franganillo",
+      "license": "CC BY 2.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Nice_(54477073144).jpg"
     },
     "lights": [
-      { "x": 0, "y": 0.4, "w": 0.27, "h": 0.2, "grid": [6, 3] },
-      { "x": 0.27, "y": 0.48, "w": 0.45, "h": 0.19, "grid": [14, 3] },
-      { "x": 0.88, "y": 0.43, "w": 0.12, "h": 0.23, "grid": [3, 3] },
-      { "x": 0, "y": 0.7, "w": 0.82, "h": 0.06, "grid": [16, 1] },
-      { "x": 0.705, "y": 0.33, "w": 0.04, "h": 0.07, "flood": true },
-      { "x": 0.54, "y": 0.5, "w": 0.025, "h": 0.04, "flood": true }
+      { "x": 0.14, "y": 0.37, "w": 0.3, "h": 0.19, "grid": [10, 4] },
+      { "x": 0.61, "y": 0.37, "w": 0.27, "h": 0.19, "grid": [9, 4] },
+      { "x": 0.14, "y": 0.59, "w": 0.3, "h": 0.05, "grid": [8, 1] },
+      { "x": 0.62, "y": 0.59, "w": 0.26, "h": 0.05, "grid": [7, 1] },
+      { "x": 0, "y": 0.3, "w": 0.12, "h": 0.24, "grid": [4, 5] },
+      { "x": 0.88, "y": 0.3, "w": 0.12, "h": 0.24, "grid": [4, 5] },
+      { "x": 0.235, "y": 0.05, "w": 0.05, "h": 0.12, "flood": true },
+      { "x": 0.675, "y": 0.18, "w": 0.04, "h": 0.09, "flood": true },
+      { "x": 0.355, "y": 0.32, "w": 0.03, "h": 0.06, "flood": true },
+      { "x": 0.41, "y": 0.44, "w": 0.02, "h": 0.05, "flood": true },
+      { "x": 0.6, "y": 0.44, "w": 0.018, "h": 0.04, "flood": true },
+      { "x": 0.008, "y": 0.335, "w": 0.01, "h": 0.02 },
+      { "x": 0.11, "y": 0.415, "w": 0.01, "h": 0.02 },
+      { "x": 0.165, "y": 0.455, "w": 0.01, "h": 0.02 },
+      { "x": 0.215, "y": 0.485, "w": 0.01, "h": 0.02 },
+      { "x": 0.975, "y": 0.365, "w": 0.01, "h": 0.02 },
+      { "x": 0.875, "y": 0.445, "w": 0.01, "h": 0.02 },
+      { "x": 0.825, "y": 0.475, "w": 0.01, "h": 0.02 }
     ]
   },
   {
@@ -178,9 +203,9 @@
     "kind": "city",
     "code": "44109",
     "name": "Nantes",
-    "lat": 47.2159,
-    "lon": -1.5508,
-    "azimuth": 70,
+    "lat": 47.2163,
+    "lon": -1.55,
+    "azimuth": 110,
     "pitch": 10,
     "photo": "scenes/nantes/photo.webp",
     "depth": "scenes/nantes/depth.png",
@@ -190,8 +215,13 @@
       "url": "https://commons.wikimedia.org/wiki/File:Château_des_ducs_de_Bretagne_(Nantes)_-_2014_-_01.JPG"
     },
     "lights": [
-      { "x": 0.25, "y": 0.35, "w": 0.73, "h": 0.45, "flood": true },
-      { "x": 0, "y": 0.52, "w": 0.17, "h": 0.12, "grid": [8, 3] }
+      { "x": 0.56, "y": 0.27, "w": 0.39, "h": 0.56, "flood": true },
+      { "x": 0.27, "y": 0.5, "w": 0.17, "h": 0.32, "flood": true },
+      { "x": 0.18, "y": 0.55, "w": 0.09, "h": 0.18, "flood": true },
+      { "x": 0, "y": 0.58, "w": 0.17, "h": 0.12, "grid": [7, 3] },
+      { "x": 0.41, "y": 0.57, "w": 0.012, "h": 0.03 },
+      { "x": 0.955, "y": 0.53, "w": 0.02, "h": 0.05 },
+      { "x": 0.955, "y": 0.67, "w": 0.02, "h": 0.04 }
     ]
   },
   {
@@ -199,22 +229,32 @@
     "kind": "city",
     "code": "34172",
     "name": "Montpellier",
-    "lat": 43.609,
-    "lon": 3.8805,
-    "azimuth": 240,
+    "lat": 43.6092,
+    "lon": 3.8812,
+    "azimuth": 225,
     "pitch": 8,
     "photo": "scenes/montpellier/photo.webp",
     "depth": "scenes/montpellier/depth.png",
     "credit": {
-      "author": "Choinowski",
+      "author": "Zairon",
       "license": "CC BY-SA 4.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Place_de_la_Comédie_Montpellier.jpg"
+      "url": "https://commons.wikimedia.org/wiki/File:Montpellier_Place_de_la_Comédie_15.jpg"
     },
     "lights": [
-      { "x": 0.57, "y": 0.36, "w": 0.38, "h": 0.25, "grid": [11, 4] },
-      { "x": 0.31, "y": 0.47, "w": 0.15, "h": 0.12, "flood": true },
-      { "x": 0, "y": 0.25, "w": 0.17, "h": 0.33, "grid": [5, 5] },
-      { "x": 0.55, "y": 0.55, "w": 0.42, "h": 0.06, "grid": [8, 1] }
+      { "x": 0.27, "y": 0.62, "w": 0.16, "h": 0.15, "flood": true },
+      { "x": 0.3, "y": 0.69, "w": 0.12, "h": 0.05, "grid": [5, 1] },
+      { "x": 0.55, "y": 0.55, "w": 0.15, "h": 0.2, "grid": [8, 6] },
+      { "x": 0.7, "y": 0.48, "w": 0.08, "h": 0.25, "grid": [3, 6] },
+      { "x": 0.73, "y": 0.42, "w": 0.27, "h": 0.2, "grid": [6, 3] },
+      { "x": 0.81, "y": 0.47, "w": 0.08, "h": 0.06 },
+      { "x": 0.81, "y": 0.54, "w": 0.09, "h": 0.1, "flood": true },
+      { "x": 0.8, "y": 0.7, "w": 0.1, "h": 0.12, "grid": [2, 1] },
+      { "x": 0, "y": 0.48, "w": 0.12, "h": 0.2, "grid": [4, 5] },
+      { "x": 0.12, "y": 0.55, "w": 0.06, "h": 0.12, "grid": [3, 3] },
+      { "x": 0, "y": 0.75, "w": 0.18, "h": 0.04, "grid": [6, 1] },
+      { "x": 0.04, "y": 0.27, "w": 0.02, "h": 0.04 },
+      { "x": 0.195, "y": 0.49, "w": 0.012, "h": 0.02 },
+      { "x": 0.258, "y": 0.58, "w": 0.01, "h": 0.02 }
     ]
   },
   {
@@ -223,22 +263,24 @@
     "code": "67482",
     "name": "Strasbourg",
     "lat": 48.5815,
-    "lon": 7.7553,
-    "azimuth": 275,
+    "lon": 7.7493,
+    "azimuth": 60,
     "pitch": 9,
     "photo": "scenes/strasbourg/photo.webp",
     "depth": "scenes/strasbourg/depth.png",
     "credit": {
-      "author": "Jonathan Martz",
-      "license": "CC BY-SA 3.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Absolute_cathedrale_vue_quais_01.JPG"
+      "author": "Ralf Roletschek",
+      "license": "CC BY 3.0",
+      "url": "https://commons.wikimedia.org/wiki/File:14-02-07-Cathédrale_Notre-Dame_de_Strasbourg-RalfR-01.jpg"
     },
     "lights": [
-      { "x": 0.5, "y": 0.2, "w": 0.04, "h": 0.27, "flood": true },
-      { "x": 0.41, "y": 0.44, "w": 0.13, "h": 0.08, "flood": true },
-      { "x": 0.6, "y": 0.43, "w": 0.37, "h": 0.27, "grid": [11, 4] },
-      { "x": 0.12, "y": 0.5, "w": 0.28, "h": 0.16, "grid": [9, 3] },
-      { "x": 0.4, "y": 0.53, "w": 0.19, "h": 0.13, "grid": [7, 3] }
+      { "x": 0.46, "y": 0, "w": 0.5, "h": 0.62, "flood": true },
+      { "x": 0.11, "y": 0.33, "w": 0.12, "h": 0.21, "grid": [5, 6] },
+      { "x": 0.23, "y": 0.36, "w": 0.16, "h": 0.2, "grid": [7, 6] },
+      { "x": 0.39, "y": 0.37, "w": 0.07, "h": 0.18, "grid": [3, 6] },
+      { "x": 0.23, "y": 0.56, "w": 0.22, "h": 0.04, "grid": [8, 1] },
+      { "x": 0, "y": 0, "w": 0.04, "h": 0.35, "grid": [1, 6] },
+      { "x": 0.155, "y": 0.5, "w": 0.01, "h": 0.02 }
     ]
   },
   {
@@ -246,21 +288,28 @@
     "kind": "city",
     "code": "33063",
     "name": "Bordeaux",
-    "lat": 44.8418,
-    "lon": -0.569,
-    "azimuth": 243,
+    "lat": 44.841,
+    "lon": -0.5693,
+    "azimuth": 300,
     "pitch": 5,
     "photo": "scenes/bordeaux/photo.webp",
     "depth": "scenes/bordeaux/depth.png",
     "credit": {
-      "author": "Mith",
+      "author": "Gestoso",
       "license": "CC BY-SA 3.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Place_de_la_Bourse,_Bordeaux.jpg"
+      "url": "https://commons.wikimedia.org/wiki/File:Hotel_de_la_Bourse.JPG"
     },
     "lights": [
-      { "x": 0, "y": 0.38, "w": 0.48, "h": 0.2, "flood": true },
-      { "x": 0.5, "y": 0.38, "w": 0.11, "h": 0.19, "flood": true },
-      { "x": 0.61, "y": 0.38, "w": 0.39, "h": 0.2, "flood": true }
+      { "x": 0.06, "y": 0.6, "w": 0.39, "h": 0.12, "grid": [15, 2] },
+      { "x": 0.05, "y": 0.73, "w": 0.42, "h": 0.08, "grid": [11, 1] },
+      { "x": 0.46, "y": 0.57, "w": 0.16, "h": 0.16, "grid": [7, 3] },
+      { "x": 0.62, "y": 0.53, "w": 0.17, "h": 0.18, "grid": [8, 3] },
+      { "x": 0.8, "y": 0.45, "w": 0.17, "h": 0.17, "grid": [5, 3] },
+      { "x": 0.46, "y": 0.72, "w": 0.51, "h": 0.07, "grid": [16, 1] },
+      { "x": 0.035, "y": 0.76, "w": 0.01, "h": 0.02 },
+      { "x": 0.575, "y": 0.715, "w": 0.01, "h": 0.02 },
+      { "x": 0.655, "y": 0.705, "w": 0.01, "h": 0.02 },
+      { "x": 0.775, "y": 0.695, "w": 0.01, "h": 0.02 }
     ]
   },
   {
@@ -268,42 +317,46 @@
     "kind": "city",
     "code": "59350",
     "name": "Lille",
-    "lat": 50.6367,
-    "lon": 3.0632,
-    "azimuth": 50,
+    "lat": 50.6368,
+    "lon": 3.0628,
+    "azimuth": 60,
     "pitch": 8,
     "photo": "scenes/lille/photo.webp",
     "depth": "scenes/lille/depth.png",
     "credit": {
-      "author": "Velvet",
+      "author": "Molde20",
       "license": "CC BY-SA 3.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Lille_grand_place_pano.jpg"
+      "url": "https://commons.wikimedia.org/wiki/File:Lille_Grand_Place.JPG"
     },
     "lights": [
-      { "x": 0.03, "y": 0.62, "w": 0.33, "h": 0.22, "grid": [12, 3] },
-      { "x": 0.5, "y": 0.66, "w": 0.42, "h": 0.18, "grid": [14, 3] },
-      { "x": 0.29, "y": 0.34, "w": 0.06, "h": 0.28, "flood": true },
-      { "x": 0.44, "y": 0.33, "w": 0.04, "h": 0.5, "flood": true }
+      { "x": 0.4, "y": 0.47, "w": 0.38, "h": 0.14, "grid": [14, 3] },
+      { "x": 0.4, "y": 0.62, "w": 0.38, "h": 0.04, "grid": [12, 1] },
+      { "x": 0.08, "y": 0.47, "w": 0.32, "h": 0.14, "grid": [14, 4] },
+      { "x": 0.08, "y": 0.61, "w": 0.32, "h": 0.04, "grid": [10, 1] },
+      { "x": 0.36, "y": 0.15, "w": 0.06, "h": 0.3, "flood": true },
+      { "x": 0.8, "y": 0.48, "w": 0.1, "h": 0.12, "grid": [5, 3] },
+      { "x": 0.9, "y": 0.38, "w": 0.1, "h": 0.25, "grid": [4, 6] },
+      { "x": 0.045, "y": 0.32, "w": 0.03, "h": 0.1, "flood": true }
     ]
   },
   {
     "id": "region-11",
     "kind": "region",
     "code": "11",
-    "name": "Arthieul (Magny-en-Vexin)",
+    "name": "Vendrest",
     "azimuth": 180,
     "pitch": 7,
     "photo": "scenes/region-11/photo.webp",
     "depth": "scenes/region-11/depth.png",
     "credit": {
-      "author": "Pierre Poschadel",
-      "license": "CC BY-SA 4.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Magny-en-Vexin_(95),_rue_du_Village_à_Arthieul_6.JPG"
+      "author": "Thor19",
+      "license": "CC BY-SA 3.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Vendrest_église.jpg"
     },
     "lights": [],
     "sign": {
-      "corners": [[0.3787, 0.6668], [0.5213, 0.6668], [0.5213, 0.8], [0.3787, 0.8]],
-      "disparity": 0.5451
+      "corners": [[0.076, 0.7179], [0.164, 0.7179], [0.164, 0.8], [0.076, 0.8]],
+      "disparity": 0.2235
     }
   },
   {
@@ -318,19 +371,19 @@
     "credit": {
       "author": "Daniel Jolivet",
       "license": "CC BY 2.0",
-      "url": "https://commons.wikimedia.org/wiki/File:La_Chapelle-sur-Loire_(Indre-et-Loire)_(15970976907).jpg"
+      "url": "https://commons.wikimedia.org/wiki/File:La-Chapelle-sur-Loire_(Indre-et-Loire)_(20915182843).jpg"
     },
     "lights": [],
     "sign": {
-      "corners": [[0.769, 0.7788], [0.931, 0.7788], [0.931, 0.95], [0.769, 0.95]],
-      "disparity": 0.6588
+      "corners": [[0.7993, 0.7718], [0.9207, 0.7718], [0.9207, 0.9], [0.7993, 0.9]],
+      "disparity": 0.4196
     }
   },
   {
     "id": "region-27",
     "kind": "region",
     "code": "27",
-    "name": "Saint-Germain-en-Montagne",
+    "name": "Luze",
     "azimuth": 180,
     "pitch": 7,
     "photo": "scenes/region-27/photo.webp",
@@ -338,212 +391,212 @@
     "credit": {
       "author": "Espirat",
       "license": "CC BY-SA 4.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Place_centrale_du_village_de_saint-Germain-en-Montagne.jpg"
+      "url": "https://commons.wikimedia.org/wiki/File:Mairie.de_Luze.jpg"
     },
     "lights": [],
     "sign": {
-      "corners": [[0.0857, 0.6282], [0.2143, 0.6282], [0.2143, 0.75], [0.0857, 0.75]],
-      "disparity": 0.4627
+      "corners": [[0.0763, 0.6793], [0.1637, 0.6793], [0.1637, 0.76], [0.0763, 0.76]],
+      "disparity": 0.2196
     }
   },
   {
     "id": "region-28",
     "kind": "region",
     "code": "28",
-    "name": "Cernay",
+    "name": "Lyons-la-Forêt",
     "azimuth": 180,
     "pitch": 7,
     "photo": "scenes/region-28/photo.webp",
     "depth": "scenes/region-28/depth.png",
     "credit": {
-      "author": "ChBougui",
-      "license": "CC BY-SA 4.0",
-      "url": "https://commons.wikimedia.org/wiki/File:La_place_du_village_de_Cernay.jpg"
+      "author": "Giogo",
+      "license": "CC BY-SA 3.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Place_de_Lyons-la-Forêt.JPG"
     },
     "lights": [],
     "sign": {
-      "corners": [[0.1117, 0.7647], [0.2883, 0.7647], [0.2883, 0.95], [0.1117, 0.95]],
-      "disparity": 0.7451
+      "corners": [[0.2917, 0.6284], [0.3683, 0.6284], [0.3683, 0.7], [0.2917, 0.7]],
+      "disparity": 0.1569
     }
   },
   {
     "id": "region-32",
     "kind": "region",
     "code": "32",
-    "name": "Prémesques",
+    "name": "Solre-le-Château",
     "azimuth": 180,
     "pitch": 7,
     "photo": "scenes/region-32/photo.webp",
     "depth": "scenes/region-32/depth.png",
     "credit": {
-      "author": "Pierre André",
+      "author": "Hyppolyte de Saint-Rambert",
       "license": "CC BY-SA 4.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Prémesques_centre_du_village,_la_mairie_(2).JPG"
+      "url": "https://commons.wikimedia.org/wiki/File:Solre-le-Château_grand_place_0056.jpg"
     },
     "lights": [],
     "sign": {
-      "corners": [[0.0397, 0.6753], [0.2003, 0.6753], [0.2003, 0.85], [0.0397, 0.85]],
-      "disparity": 0.651
+      "corners": [[0.733, 0.7193], [0.867, 0.7193], [0.867, 0.86], [0.733, 0.86]],
+      "disparity": 0.4941
     }
   },
   {
     "id": "region-44",
     "kind": "region",
     "code": "44",
-    "name": "Durrenbach",
+    "name": "Stotzheim",
     "azimuth": 180,
     "pitch": 7,
     "photo": "scenes/region-44/photo.webp",
     "depth": "scenes/region-44/depth.png",
     "credit": {
-      "author": "René Dinkel",
-      "license": "CC BY-SA 3.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Durrenbach_(rue_du_village).JPG"
+      "author": "Ralph Hammann",
+      "license": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Stotzheim_rHautVillage_36.JPG"
     },
     "lights": [],
     "sign": {
-      "corners": [[0.6853, 0.6593], [0.8147, 0.6593], [0.8147, 0.78], [0.6853, 0.78]],
-      "disparity": 0.4667
+      "corners": [[0.0703, 0.6886], [0.1897, 0.6886], [0.1897, 0.8], [0.0703, 0.8]],
+      "disparity": 0.4078
     }
   },
   {
     "id": "region-52",
     "kind": "region",
     "code": "52",
-    "name": "Bousse",
+    "name": "Lassay-les-Châteaux",
     "azimuth": 180,
     "pitch": 7,
     "photo": "scenes/region-52/photo.webp",
     "depth": "scenes/region-52/depth.png",
     "credit": {
-      "author": "Labiloute",
-      "license": "CC BY-SA 3.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Bousse-Eglise-02.jpg"
+      "author": "Fab5669",
+      "license": "CC0",
+      "url": "https://commons.wikimedia.org/wiki/File:Lassay-les-Châteaux_-_rue_du_Château.jpg"
     },
     "lights": [],
     "sign": {
-      "corners": [[0.7817, 0.6724], [0.9183, 0.6724], [0.9183, 0.8], [0.7817, 0.8]],
-      "disparity": 0.5098
+      "corners": [[0.009, 0.6519], [0.131, 0.6519], [0.131, 0.78], [0.009, 0.78]],
+      "disparity": 0.4235
     }
   },
   {
     "id": "region-53",
     "kind": "region",
     "code": "53",
-    "name": "La Feuillée",
+    "name": "La Roche-Bernard",
     "azimuth": 180,
     "pitch": 7,
     "photo": "scenes/region-53/photo.webp",
     "depth": "scenes/region-53/depth.png",
     "credit": {
-      "author": "Henri Moreau",
+      "author": "Thérèse Gaigé",
       "license": "CC BY-SA 4.0",
-      "url": "https://commons.wikimedia.org/wiki/File:La_Feuillée_Place_des_marronniers_2.JPG"
+      "url": "https://commons.wikimedia.org/wiki/File:Maisons_sur_la_place_du_Bouffay_(La_Roche-Bernard,_56)_-_3.jpg"
     },
     "lights": [],
     "sign": {
-      "corners": [[0.0383, 0.6476], [0.2017, 0.6476], [0.2017, 0.8], [0.0383, 0.8]],
-      "disparity": 0.6667
+      "corners": [[0.2517, 0.6185], [0.3483, 0.6185], [0.3483, 0.72], [0.2517, 0.72]],
+      "disparity": 0.2745
     }
   },
   {
     "id": "region-75",
     "kind": "region",
     "code": "75",
-    "name": "Genouillac",
+    "name": "Bidache",
     "azimuth": 180,
     "pitch": 7,
     "photo": "scenes/region-75/photo.webp",
     "depth": "scenes/region-75/depth.png",
     "credit": {
-      "author": "J. N. Squire",
+      "author": "A1AA1A",
       "license": "CC BY-SA 4.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Centre-bourg_de_Genouillac_1.jpg"
+      "url": "https://commons.wikimedia.org/wiki/File:Bidache_-_Oustau.jpg"
     },
     "lights": [],
     "sign": {
-      "corners": [[0.014, 0.6768], [0.146, 0.6768], [0.146, 0.8], [0.014, 0.8]],
-      "disparity": 0.4824
+      "corners": [[0.551, 0.7551], [0.689, 0.7551], [0.689, 0.9], [0.551, 0.9]],
+      "disparity": 0.5176
     }
   },
   {
     "id": "region-76",
     "kind": "region",
     "code": "76",
-    "name": "Marciac",
+    "name": "Rieux-Volvestre",
     "azimuth": 180,
     "pitch": 7,
     "photo": "scenes/region-76/photo.webp",
     "depth": "scenes/region-76/depth.png",
     "credit": {
-      "author": "Renhour48",
-      "license": "CC0",
-      "url": "https://commons.wikimedia.org/wiki/File:Marciac_-_Place_de_L'Hôtel-de-Ville_21.jpg"
+      "author": "Père Igor",
+      "license": "CC BY-SA 3.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Rieux-Volvestre_pl_Lastic_colombages_(1).jpg"
     },
     "lights": [],
     "sign": {
-      "corners": [[0.0937, 0.8317], [0.2063, 0.8317], [0.2063, 0.95], [0.0937, 0.95]],
-      "disparity": 0.3686
+      "corners": [[0.134, 0.7768], [0.266, 0.7768], [0.266, 0.9], [0.134, 0.9]],
+      "disparity": 0.4824
     }
   },
   {
     "id": "region-84",
     "kind": "region",
     "code": "84",
-    "name": "Chanterelle",
+    "name": "Saint-Saturnin",
     "azimuth": 180,
     "pitch": 7,
     "photo": "scenes/region-84/photo.webp",
     "depth": "scenes/region-84/depth.png",
     "credit": {
-      "author": "Pymouss",
-      "license": "CC BY-SA 4.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Chanterelle_15_-centre-bourg_20200812-01.jpg"
+      "author": "Torsade de Pointes",
+      "license": "CC0",
+      "url": "https://commons.wikimedia.org/wiki/File:Saint-Saturnin_Place_de_l'Ormeau1.JPG"
     },
     "lights": [],
     "sign": {
-      "corners": [[0.789, 0.7219], [0.911, 0.7219], [0.911, 0.85], [0.789, 0.85]],
-      "disparity": 0.4235
+      "corners": [[0.1867, 0.8118], [0.3133, 0.8118], [0.3133, 0.93], [0.1867, 0.93]],
+      "disparity": 0.451
     }
   },
   {
     "id": "region-93",
     "kind": "region",
     "code": "93",
-    "name": "Banon",
+    "name": "Saint-Paul-en-Forêt",
     "azimuth": 180,
     "pitch": 7,
     "photo": "scenes/region-93/photo.webp",
     "depth": "scenes/region-93/depth.png",
     "credit": {
-      "author": "Véronique Pagnier",
-      "license": "CC BY-SA 3.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Commerces_à_Banon.JPG"
+      "author": "Marianne Casamance",
+      "license": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:St_Paul_en_Forêt_-_mairie.JPG"
     },
     "lights": [],
     "sign": {
-      "corners": [[0.829, 0.7048], [0.931, 0.7048], [0.931, 0.8], [0.829, 0.8]],
-      "disparity": 0.3059
+      "corners": [[0.727, 0.7137], [0.873, 0.7137], [0.873, 0.85], [0.727, 0.85]],
+      "disparity": 0.5647
     }
   },
   {
     "id": "region-94",
     "kind": "region",
     "code": "94",
-    "name": "Aullène",
+    "name": "Bastelica",
     "azimuth": 180,
     "pitch": 7,
     "photo": "scenes/region-94/photo.webp",
     "depth": "scenes/region-94/depth.png",
     "credit": {
-      "author": "Wikipedro",
-      "license": "CC BY-SA 4.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Aullène,_la_place_et_l'église_San'_Nicolau-2.jpg"
+      "author": "Pierre Bona",
+      "license": "CC BY-SA 3.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Bastelica_corso_Sampiero.jpg"
     },
     "lights": [],
     "sign": {
-      "corners": [[0.6307, 0.6742], [0.7693, 0.6742], [0.7693, 0.82], [0.6307, 0.82]],
-      "disparity": 0.5216
+      "corners": [[0.8447, 0.722], [0.9953, 0.722], [0.9953, 0.88], [0.8447, 0.88]],
+      "disparity": 0.5922
     }
   },
   {
@@ -556,21 +609,21 @@
     "photo": "scenes/region-01/photo.webp",
     "depth": "scenes/region-01/depth.png",
     "credit": {
-      "author": "Enrevseluj",
-      "license": "CC BY-SA 4.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Église_Notre-Dame-de-l'Assomption_de_Petit-Bourg_en_avril_2025.jpg"
+      "author": "LPLT",
+      "license": "CC BY-SA 3.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Mairie_de_Petit-Bourg.JPG"
     },
     "lights": [],
     "sign": {
-      "corners": [[0.7347, 0.728], [0.8653, 0.728], [0.8653, 0.85], [0.7347, 0.85]],
-      "disparity": 0.4745
+      "corners": [[0.8487, 0.7468], [0.9913, 0.7468], [0.9913, 0.88], [0.8487, 0.88]],
+      "disparity": 0.5451
     }
   },
   {
     "id": "region-02",
     "kind": "region",
     "code": "02",
-    "name": "Le Diamant",
+    "name": "Les Trois-Îlets",
     "azimuth": 180,
     "pitch": 7,
     "photo": "scenes/region-02/photo.webp",
@@ -578,59 +631,59 @@
     "credit": {
       "author": "Thérèse Gaigé",
       "license": "CC0",
-      "url": "https://commons.wikimedia.org/wiki/File:Église_Saint-Thomas_du_Diamant_(Martinique).jpg"
+      "url": "https://commons.wikimedia.org/wiki/File:Maisons,_rue_Léon_Papin_Dupont_(Les_Trois-Îlets,_Martinique)_-_01.jpg"
     },
     "lights": [],
     "sign": {
-      "corners": [[0.874, 0.7341], [0.966, 0.7341], [0.966, 0.82], [0.874, 0.82]],
-      "disparity": 0.2471
+      "corners": [[0.3893, 0.6068], [0.5107, 0.6068], [0.5107, 0.72], [0.3893, 0.72]],
+      "disparity": 0.4196
     }
   },
   {
     "id": "region-03",
     "kind": "region",
     "code": "03",
-    "name": "Roura",
+    "name": "Iracoubo",
     "azimuth": 180,
     "pitch": 7,
     "photo": "scenes/region-03/photo.webp",
     "depth": "scenes/region-03/depth.png",
     "credit": {
-      "author": "Don-vip",
-      "license": "CC BY-SA 4.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Commissariat_municipal_et_Église_Saint-Dominique_de_Roura.jpg"
+      "author": "Ayshka Sene, Sophie Fuggle, Claire Reddleman",
+      "license": "CC BY 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Église_Saint-Joseph_d'Iracoubo_011.jpg"
     },
     "lights": [],
     "sign": {
-      "corners": [[0.1223, 0.6791], [0.2777, 0.6791], [0.2777, 0.85], [0.1223, 0.85]],
-      "disparity": 0.6196
+      "corners": [[0.05, 0.733], [0.19, 0.733], [0.19, 0.88], [0.05, 0.88]],
+      "disparity": 0.55
     }
   },
   {
     "id": "region-04",
     "kind": "region",
     "code": "04",
-    "name": "Le Tévelave (Les Avirons)",
+    "name": "Hell-Bourg",
     "azimuth": 180,
     "pitch": 7,
     "photo": "scenes/region-04/photo.webp",
     "depth": "scenes/region-04/depth.png",
     "credit": {
-      "author": "Clémenceau Lauret",
-      "license": "CC BY-SA 4.0",
-      "url": "https://commons.wikimedia.org/wiki/File:Eglise_Saint-Joseph_-_Le_Tévelave_Les_Avirons_La_Réunion_-_Vue_de_la_rue.jpg"
+      "author": "Thierry Caro",
+      "license": "CC BY-SA 3.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Rue-Hell-Bourg.JPG"
     },
     "lights": [],
     "sign": {
-      "corners": [[0.0263, 0.6463], [0.1737, 0.6463], [0.1737, 0.85], [0.0263, 0.85]],
-      "disparity": 0.5725
+      "corners": [[0.0433, 0.6891], [0.1967, 0.6891], [0.1967, 0.85], [0.0433, 0.85]],
+      "disparity": 0.6078
     }
   },
   {
     "id": "region-06",
     "kind": "region",
     "code": "06",
-    "name": "M'tsangamouji",
+    "name": "M'Tsangamouji",
     "azimuth": 180,
     "pitch": 7,
     "photo": "scenes/region-06/photo.webp",
@@ -642,8 +695,8 @@
     },
     "lights": [],
     "sign": {
-      "corners": [[0.0857, 0.6799], [0.2143, 0.6799], [0.2143, 0.8], [0.0857, 0.8]],
-      "disparity": 0.4627
+      "corners": [[0.036, 0.6805], [0.164, 0.6805], [0.164, 0.8], [0.036, 0.8]],
+      "disparity": 0.4588
     }
   }
 ]

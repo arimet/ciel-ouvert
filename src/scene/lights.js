@@ -23,7 +23,7 @@ export function expandLights(lights, rand = seeded(7)) {
   const out = []
   const maybe = rect => { const k = rand(); if (k >= .3) out.push({ ...rect, level: .45 + .55 * k }) }
   for (const { x, y, w, h, grid, flood } of lights) {
-    if (flood) out.push({ x, y, w, h, level: .55 })
+    if (flood) out.push({ x, y, w, h, level: 1, flood: true })
     else if (grid) {
       const [cols, rows] = grid, cw = w / cols, ch = h / rows
       for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
@@ -34,16 +34,18 @@ export function expandLights(lights, rand = seeded(7)) {
   return out
 }
 
-// Mask of the windows and lamps that light up at night (brightness in red), softly blurred.
+// Mask of what lights up at night, softly blurred: windows and lamps in red, floodlit stone in green.
 export function lightsToMask(lights, width = 512, height = 512) {
   const canvas = document.createElement('canvas')
   canvas.width = width; canvas.height = height
   const g = canvas.getContext('2d')
   g.fillStyle = '#000'; g.fillRect(0, 0, width, height)
-  g.filter = 'blur(2px)'
+  g.globalCompositeOperation = 'lighter'
   for (const r of expandLights(lights)) {
     const b = lightRectToPixels(r, width, height)
-    g.fillStyle = `rgb(${Math.round(255 * r.level)},0,0)`
+    // Floodlight beams fade out at their edges; windows stay crisp.
+    g.filter = r.flood ? `blur(${Math.round(width / 50)}px)` : 'blur(2px)'
+    g.fillStyle = r.flood ? 'rgb(0,255,0)' : `rgb(${Math.round(255 * r.level)},0,0)`
     g.fillRect(b.x0, b.y0, b.x1 - b.x0, b.y1 - b.y0)
   }
   const texture = new CanvasTexture(canvas)

@@ -24,9 +24,9 @@ test('a facade zone splits into a grid of windows', async () => {
   ])
 })
 
-test('floodlit monuments are always lit, softer', async () => {
+test('floodlit monuments are always lit, and kept apart from windows', async () => {
   const { expandLights } = await import('../src/scene/lights.js')
-  expect(expandLights([{ x: .1, y: .1, w: .2, h: .2, flood: true }], () => 0)).toEqual([{ x: .1, y: .1, w: .2, h: .2, level: .55 }])
+  expect(expandLights([{ x: .1, y: .1, w: .2, h: .2, flood: true }], () => 0)).toEqual([{ x: .1, y: .1, w: .2, h: .2, level: 1, flood: true }])
 })
 
 test('roughly a third of windows stay dark', async () => {

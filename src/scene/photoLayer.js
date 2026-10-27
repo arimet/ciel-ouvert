@@ -10,11 +10,11 @@ const vertexShader = /* glsl */ `
 
 // Depth map = disparity from Depth Anything: 1 near, 0 at infinity (the sky).
 const fragmentShader = /* glsl */ `
-  uniform sampler2D map, depth, overlay, lights, signMap;
+  uniform sampler2D map, mask, depth, overlay, lights, signMap;
   uniform mat3 signH;
   uniform float hasSign, signDisp;
   uniform vec3 tint, fogCol;
-  uniform float aspect, time, fog, rain, snow, flash, night, maskThreshold, fallback;
+  uniform float aspect, time, fog, rain, snow, flash, night, fallback;
   uniform vec3 tornado; // x on screen, disparity, intensity
   varying vec2 vUv; varying vec2 sUv;
   float h1(float x){ return fract(sin(x * 91.7) * 43758.5453); }
@@ -41,9 +41,11 @@ const fragmentShader = /* glsl */ `
     return step(.45, h(id + 3.)) * smoothstep(size, size * .3, length(f - off * .6));
   }
   void main(){
-    vec3 photo = texture2D(map, vUv).rgb * tint * (1. + flash * .8);
-    // Windows and lamps light up at night, with a warm glow.
-    photo += vec3(1., .74, .4) * texture2D(lights, vUv).r * night * .9;
+    vec3 src = texture2D(map, vUv).rgb;
+    vec3 photo = src * tint * (1. + flash * .8);
+    // At night windows and lamps glow warm; floodlights warm up the stone itself, keeping its texture.
+    vec2 lit = texture2D(lights, vUv).rg;
+    photo += (vec3(1., .74, .4) * lit.r * .9 + src * vec3(1., .78, .5) * lit.g * .9) * night;
     float disp = texture2D(depth, vUv).r;
     // Town sign: projected through its homography, in front of whatever is farther than it.
     if (hasSign > .5) {
@@ -55,7 +57,7 @@ const fragmentShader = /* glsl */ `
         disp = signDisp;
       }
     }
-    float m = max(smoothstep(maskThreshold, maskThreshold + .035, disp), fallback);
+    float m = max(texture2D(mask, vUv).r, fallback);
     float dist = 1. / (disp + .04);
     // Fog follows real distance; far wisps drift slower.
     float wisps = fbm(vec2(vUv.x * 3. * aspect + time * .05 / (1. + dist * .15), vUv.y * 7. + dist * .3 - time * .01));
@@ -110,11 +112,11 @@ export function createPhotoLayer(renderer, overlayTexture) {
     transparent: true, depthTest: false, depthWrite: false,
     blending: THREE.CustomBlending, blendSrc: THREE.OneFactor, blendDst: THREE.OneMinusSrcAlphaFactor,
     uniforms: {
-      map: { value: null }, depth: { value: null }, overlay: { value: overlayTexture }, lights: { value: null }, signMap: { value: null }, signH: { value: new THREE.Matrix3() }, hasSign: { value: 0 }, signDisp: { value: 0 }, tornado: { value: new THREE.Vector3() },
+      map: { value: null }, mask: { value: null }, depth: { value: null }, overlay: { value: overlayTexture }, lights: { value: null }, signMap: { value: null }, signH: { value: new THREE.Matrix3() }, hasSign: { value: 0 }, signDisp: { value: 0 }, tornado: { value: new THREE.Vector3() },
       scale: { value: new THREE.Vector2(1, 1) }, offset: { value: new THREE.Vector2(.5, .5) }, aspect: { value: 1.5 }, time: { value: 0 },
       tint: { value: new THREE.Vector3(1, 1, 1) }, fogCol: { value: new THREE.Vector3(.8, .82, .84) },
       fog: { value: 0 }, rain: { value: 0 }, snow: { value: 0 }, flash: { value: 0 }, night: { value: 0 },
-      maskThreshold: { value: .015 }, fallback: { value: 0 },
+      fallback: { value: 0 },
     },
     vertexShader, fragmentShader,
   })
@@ -141,16 +143,18 @@ export function createPhotoLayer(renderer, overlayTexture) {
     async load(entry, signText = null) {
       const token = latest.begin()
       const base = import.meta.env.BASE_URL
-      const [map, depth] = await Promise.all([loader.loadAsync(base + entry.photo), loader.loadAsync(base + entry.depth)])
+      // The sky mask sits next to the photo (prepare-scene writes both).
+      const maskUrl = base + entry.photo.replace(/photo\.webp$/, 'mask.png')
+      const [map, mask, depth] = await Promise.all([loader.loadAsync(base + entry.photo), loader.loadAsync(maskUrl), loader.loadAsync(base + entry.depth)])
       if (!latest.isCurrent(token)) {
-        map.dispose(); depth.dispose()
+        map.dispose(); mask.dispose(); depth.dispose()
         return false
       }
-      u.map.value?.dispose(); u.depth.value?.dispose(); u.lights.value?.dispose()
+      u.map.value?.dispose(); u.mask.value?.dispose(); u.depth.value?.dispose(); u.lights.value?.dispose()
       u.map.value = map
+      u.mask.value = mask
       u.depth.value = depth
       u.lights.value = lightsToMask(entry.lights)
-      u.maskThreshold.value = entry.maskThreshold ?? .015
       // Regional squares keep their sign in view on narrow screens.
       focusX = entry.sign && signText ? (entry.sign.corners[0][0] + entry.sign.corners[1][0]) / 2 : entry.focusX ?? .5
       u.signMap.value?.dispose()
