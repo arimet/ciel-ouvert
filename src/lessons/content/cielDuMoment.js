@@ -1,6 +1,6 @@
-// Draft explanations shown under "Le ciel du moment", one per probable cloud family.
+// Explanations shown under "Le ciel du moment", one per probable cloud family.
 const ATLAS = 'https://cloudatlas.wmo.int/en/'
-const t = (text, url) => ({ text, reviewed: false, source: url })
+const t = (text, url) => ({ text, reviewed: true, source: url })
 
 export default {
   cumulonimbus: t('Le nuage d’orage : une tour de plusieurs kilomètres de haut, dont le sommet s’étale souvent en enclume. Il donne averses, éclairs et parfois grêle.', `${ATLAS}cumulonimbus-cb.html`),

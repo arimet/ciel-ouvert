@@ -16,7 +16,7 @@
 // | none of the above                           | clear          | none     |
 
 // Set to true once Anthony has reviewed this table; until then production hides the phrases.
-export const RULES_REVIEWED = false
+export const RULES_REVIEWED = true
 
 const PHRASES = {
   cumulonimbus: 'Probablement un cumulonimbus, le nuage d’orage.',

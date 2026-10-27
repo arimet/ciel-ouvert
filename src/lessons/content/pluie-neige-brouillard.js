@@ -1,8 +1,8 @@
-// Draft: facts from Météo-France, the WMO atlas, MétéoSuisse and IRM (see `sources`).
+// Facts from Météo-France, the WMO atlas, MétéoSuisse and IRM (see `sources`).
 export default {
   id: 'pluie-neige-brouillard',
   title: 'Pluie, neige, brouillard',
-  reviewed: false,
+  reviewed: true,
   steps: [
     {
       title: 'Des gouttelettes aux gouttes',

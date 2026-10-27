@@ -1,10 +1,10 @@
-// Draft: facts from Keraunos, the French tornado and thunderstorm observatory (see `sources`).
+// Facts from Keraunos, the French tornado and thunderstorm observatory (see `sources`).
 const far = { x: .62, intensity: 1 }
 
 export default {
   id: 'tornades',
   title: 'Les tornades',
-  reviewed: false,
+  reviewed: true,
   steps: [
     {
       title: 'Une tornade, c’est quoi ?',

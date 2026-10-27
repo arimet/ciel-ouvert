@@ -1,11 +1,11 @@
-// Draft: every statement comes from the WMO International Cloud Atlas pages listed in `sources`.
+// Every statement comes from the WMO International Cloud Atlas pages listed in `sources`.
 const ATLAS = 'https://cloudatlas.wmo.int/en/'
 const off = { height: 0 } // disables a cloud layer
 
 export default {
   id: 'nuages',
   title: 'Les types de nuages',
-  reviewed: false,
+  reviewed: true,
   steps: [
     {
       title: 'Trois étages',

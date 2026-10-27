@@ -1,8 +1,8 @@
-// Draft: facts from Météo-France, Keraunos, MétéoSuisse, IRM and the WMO atlas (see `sources`).
+// Facts from Météo-France, Keraunos, MétéoSuisse, IRM and the WMO atlas (see `sources`).
 export default {
   id: 'orages',
   title: 'Les orages',
-  reviewed: false,
+  reviewed: true,
   steps: [
     {
       title: 'L’air chaud monte',
@@ -37,7 +37,7 @@ export default {
     },
     {
       title: 'Le tonnerre',
-      text: 'L’éclair chauffe l’air à environ 30 000 °C en quelques millièmes de seconde. L’air se dilate brutalement : c’est le bruit du tonnerre. Le son parcourt un kilomètre en environ 3 secondes : comptez les secondes entre l’éclair et le tonnerre, divisez par 3, vous avez la distance en kilomètres. À 10 secondes ou moins, l’orage est dangereusement proche.',
+      text: 'L’éclair chauffe l’air à environ 30 000 °C en quelques millièmes de seconde. L’air se dilate brutalement : c’est le bruit du tonnerre. Le son parcourt un kilomètre en environ 3 secondes : comptez les secondes entre l’éclair et le tonnerre, divisez par 3, vous avez la distance en kilomètres. À 30 secondes ou moins, l’orage est à moins de 10 km : mettez-vous à l’abri, la foudre peut tomber jusque-là.',
       anchor: 'storm',
     },
     {
